@@ -1636,13 +1636,18 @@
     </div>
 
     <!-- Diaper Modal -->
-    <div class="modal" id="diaperModal">
+    <div class="modal" id="diaperModal" onclick="if(event.target === this) closeDiaperModal()">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">🚼 Log Diaper Change</div>
                 <button class="close-btn" onclick="closeDiaperModal()">×</button>
             </div>
             <form onsubmit="logDiaper(event)">
+                <div class="form-group">
+                    <label class="form-label">Time of Change</label>
+                    <input type="datetime-local" class="form-input" id="diaperTime">
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Type</label>
                     <div class="radio-group">
@@ -2310,6 +2315,15 @@
 
         // Show Diaper Modal
         function showDiaperModal() {
+            // Set current time as default
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('diaperTime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+
             document.getElementById('diaperModal').classList.add('active');
         }
 
@@ -2321,12 +2335,16 @@
         function logDiaper(event) {
             event.preventDefault();
 
+            // Get custom time from input field
+            const diaperTimeInput = document.getElementById('diaperTime').value;
+            const diaperTimestamp = diaperTimeInput ? new Date(diaperTimeInput).getTime() : Date.now();
+
             const diaperType = document.querySelector('input[name="diaperType"]:checked').value;
             const notes = document.getElementById('diaperNotes').value;
 
             appState.activities.push({
                 type: 'diaper',
-                timestamp: Date.now(),
+                timestamp: diaperTimestamp,
                 diaperType: diaperType,
                 notes: notes
             });
@@ -2335,6 +2353,7 @@
             updateUI();
             closeDiaperModal();
 
+            // Clear form
             document.getElementById('diaperNotes').value = '';
         }
 
