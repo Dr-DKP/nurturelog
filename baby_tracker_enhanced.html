@@ -898,6 +898,57 @@
             opacity: 0.4;
         }
 
+        /* Sleep Menu Dropdown */
+        .sleep-menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .sleep-menu {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.25rem;
+            min-width: 180px;
+            z-index: 1000;
+        }
+
+        .sleep-menu.show {
+            display: flex;
+        }
+
+        .sleep-menu button {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sleep-menu button:hover {
+            border-color: var(--primary);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .sleep-menu button:active {
+            transform: scale(0.95);
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .timer-display {
@@ -1027,10 +1078,16 @@
                         <div class="quick-btn-icon">🍼</div>
                         <div class="quick-btn-label">Feed Now</div>
                     </button>
-                    <button class="quick-btn" onclick="toggleSleep()">
-                        <div class="quick-btn-icon" id="sleepIcon">😴</div>
-                        <div class="quick-btn-label" id="sleepLabel">Start Sleep</div>
-                    </button>
+                    <div class="sleep-menu-container">
+                        <button class="quick-btn" onclick="toggleSleepMenu()" id="sleepQuickBtn">
+                            <div class="quick-btn-icon" id="sleepIcon">😴</div>
+                            <div class="quick-btn-label" id="sleepLabel">Sleep</div>
+                        </button>
+                        <div class="sleep-menu" id="sleepMenu">
+                            <button onclick="startSleepTimer(); hideSleepMenu();">⏱️ Start Timer</button>
+                            <button onclick="showSleepModal(); hideSleepMenu();">📝 Log Past Sleep</button>
+                        </div>
+                    </div>
                     <button class="quick-btn" onclick="showDiaperModal()">
                         <div class="quick-btn-icon">🚼</div>
                         <div class="quick-btn-label">Log Diaper</div>
@@ -1045,7 +1102,7 @@
                 <div class="sleep-active-banner" id="sleepBanner" style="display: none;">
                     <div style="font-size: 1.1rem; font-weight: 600;">💤 Baby is Sleeping</div>
                     <div class="sleep-duration" id="sleepDuration">0:00</div>
-                    <button class="btn" style="background: rgba(255,255,255,0.2);" onclick="toggleSleep()">Wake Up</button>
+                    <button class="btn" style="background: rgba(255,255,255,0.2);" onclick="endSleepTimer()">Wake Up</button>
                 </div>
 
                 <!-- Today's Stats -->
@@ -1396,14 +1453,16 @@
                     <div class="form-group">
                         <label class="form-label">Breast Milk Flow Rate (ml/min)</label>
                         <select class="form-select" id="settingsMilkFlow" onchange="updateFlowRate()">
-                            <option value="3">3 ml/min (Newborn 0-7 days)</option>
-                            <option value="4">4 ml/min (Newborn 0-7 days)</option>
-                            <option value="5" selected>5 ml/min (Week 1-2)</option>
-                            <option value="6">6 ml/min (Week 2-3)</option>
-                            <option value="7">7 ml/min (Week 3-4)</option>
-                            <option value="8">8 ml/min (Month 1-2)</option>
-                            <option value="9">9 ml/min (Month 2+)</option>
-                            <option value="10">10 ml/min (Month 2+)</option>
+                            <option value="0.5">0.5 ml/min (Newborn 0-7 days - Lower range)</option>
+                            <option value="1">1 ml/min (Newborn 0-7 days - Average)</option>
+                            <option value="1.5" selected>1.5 ml/min (Newborn 1-2 weeks)</option>
+                            <option value="2">2 ml/min (Newborn 2 weeks)</option>
+                            <option value="2.5">2.5 ml/min (Weeks 3-4)</option>
+                            <option value="3">3 ml/min (Month 1-2)</option>
+                            <option value="3.5">3.5 ml/min (Month 1-2)</option>
+                            <option value="4">4 ml/min (Month 2-3)</option>
+                            <option value="4.5">4.5 ml/min (Month 3+)</option>
+                            <option value="5">5 ml/min (Month 3+ - Strong suckers)</option>
                         </select>
                         <div id="flowCalculator" class="calculator-result" style="display: none; margin-top: 1rem;">
                             <div class="calculator-result-value" id="flowEstimate">0 ml</div>
@@ -1561,6 +1620,47 @@
         </div>
     </div>
 
+    <!-- Sleep Modal -->
+    <div class="modal" id="sleepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">😴 Log Sleep</div>
+                <button class="close-btn" onclick="closeSleepModal()">×</button>
+            </div>
+            <form onsubmit="logPastSleep(event)">
+                <div class="form-group">
+                    <label class="form-label">Sleep Start Time</label>
+                    <input type="datetime-local" class="form-input" id="sleepStartTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Sleep Status</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="sleepStatus" value="ended" id="sleepEnded" checked onchange="updateSleepEndVisibility()">
+                            <label class="radio-label" for="sleepEnded">Already Woke Up</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="sleepStatus" value="ongoing" id="sleepOngoing" onchange="updateSleepEndVisibility()">
+                            <label class="radio-label" for="sleepOngoing">Still Sleeping</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="sleepEndGroup">
+                    <label class="form-label">Sleep End Time</label>
+                    <input type="datetime-local" class="form-input" id="sleepEndTime">
+                </div>
+
+                <div id="sleepDurationPreview" style="margin: 1rem 0; padding: 1rem; background: rgba(168, 85, 247, 0.1); border-radius: 8px; text-align: center; font-weight: 600; color: var(--primary);">
+                    Duration: --
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log Sleep</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <button class="nav-btn active" onclick="switchTab('home')">
@@ -1591,7 +1691,7 @@
             babyName: '',
             babyBirthdate: '',
             feedingInterval: 150,
-            milkFlowRate: 5, // ml per minute
+            milkFlowRate: 1.5, // ml per minute (corrected to realistic newborn rate)
             schedule: [],
             activities: [],
             sleepStartTime: null,
@@ -1612,7 +1712,11 @@
                 updateUI();
                 startTimer();
                 if (appState.sleepStartTime) {
-                    startSleepTimer();
+                    updateSleepTimerDisplay();
+                    appState.sleepTimerInterval = setInterval(updateSleepTimerDisplay, 1000);
+                    document.getElementById('sleepBanner').style.display = 'block';
+                    document.getElementById('sleepIcon').textContent = '⏰';
+                    document.getElementById('sleepLabel').textContent = 'End Sleep';
                 }
             } else {
                 // Set default first feed time to now
@@ -1626,23 +1730,25 @@
             updateFlowRate();
         }
 
-        // Calculate default flow rate based on age
+        // Calculate default flow rate based on age (CORRECTED VALUES)
         function calculateDefaultFlowRate() {
-            if (!appState.babyBirthdate) return 5;
+            if (!appState.babyBirthdate) return 1.5;
 
             const birthDate = new Date(appState.babyBirthdate);
             const ageInDays = Math.floor((Date.now() - birthDate.getTime()) / 86400000);
 
-            if (ageInDays <= 7) return 4;
-            else if (ageInDays <= 14) return 5;
-            else if (ageInDays <= 21) return 6;
-            else if (ageInDays <= 30) return 7;
-            else return 8;
+            // Medically accurate flow rates for breastfeeding
+            if (ageInDays <= 7) return 1;        // Newborn: 0.5-2 ml/min avg
+            else if (ageInDays <= 14) return 1.5; // Week 2: 1-2 ml/min
+            else if (ageInDays <= 30) return 2.5; // Weeks 3-4: 2-3 ml/min
+            else if (ageInDays <= 60) return 3;   // Month 1-2: 2-4 ml/min
+            else if (ageInDays <= 90) return 4;   // Month 2-3: 3-4 ml/min
+            else return 4.5;                       // Month 3+: 4-5 ml/min
         }
 
         // Update flow rate display
         function updateFlowRate() {
-            const flowRate = parseInt(document.getElementById('settingsMilkFlow')?.value || appState.milkFlowRate);
+            const flowRate = parseFloat(document.getElementById('settingsMilkFlow')?.value || appState.milkFlowRate);
             const calculator = document.getElementById('flowCalculator');
             if (calculator) {
                 calculator.style.display = 'block';
@@ -1932,44 +2038,182 @@
             document.getElementById('milkEstimate').textContent = '';
         }
 
-        // Sleep Tracking
-        function toggleSleep() {
+        // Sleep Tracking - Menu Toggle
+        function toggleSleepMenu() {
+            const menu = document.getElementById('sleepMenu');
+            menu.classList.toggle('show');
+        }
+
+        function hideSleepMenu() {
+            const menu = document.getElementById('sleepMenu');
+            menu.classList.remove('show');
+        }
+
+        // Start sleep timer (real-time tracking)
+        function startSleepTimer() {
             if (appState.sleepStartTime) {
-                // End sleep
-                const duration = Date.now() - appState.sleepStartTime;
-                appState.activities.push({
-                    type: 'sleep',
-                    timestamp: appState.sleepStartTime,
-                    duration: duration
-                });
+                // Already running, end it
+                endSleepTimer();
+                return;
+            }
 
-                appState.sleepStartTime = null;
-                clearInterval(appState.sleepTimerInterval);
+            appState.sleepStartTime = Date.now();
+            document.getElementById('sleepIcon').textContent = '⏰';
+            document.getElementById('sleepLabel').textContent = 'End Sleep';
+            document.getElementById('sleepBanner').style.display = 'block';
+            document.getElementById('sleepQuickBtn').onclick = endSleepTimer;
 
-                document.getElementById('sleepIcon').textContent = '😴';
-                document.getElementById('sleepLabel').textContent = 'Start Sleep';
-                document.getElementById('sleepBanner').style.display = 'none';
+            updateSleepTimerDisplay();
+            appState.sleepTimerInterval = setInterval(updateSleepTimerDisplay, 1000);
+            saveState();
+        }
 
-                saveState();
-                updateUI();
+        // End sleep timer
+        function endSleepTimer() {
+            if (!appState.sleepStartTime) return;
+
+            const duration = Date.now() - appState.sleepStartTime;
+            appState.activities.push({
+                type: 'sleep',
+                timestamp: appState.sleepStartTime,
+                duration: duration
+            });
+
+            appState.sleepStartTime = null;
+            clearInterval(appState.sleepTimerInterval);
+
+            document.getElementById('sleepIcon').textContent = '😴';
+            document.getElementById('sleepLabel').textContent = 'Sleep';
+            document.getElementById('sleepBanner').style.display = 'none';
+            document.getElementById('sleepQuickBtn').onclick = toggleSleepMenu;
+
+            saveState();
+            updateUI();
+        }
+
+        // Show sleep modal for manual entry
+        function showSleepModal() {
+            const now = new Date();
+            const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+
+            document.getElementById('sleepStartTime').value = formatDateTimeLocal(oneHourAgo);
+            document.getElementById('sleepEndTime').value = formatDateTimeLocal(now);
+            document.getElementById('sleepEnded').checked = true;
+
+            updateSleepEndVisibility();
+            updateSleepDurationPreview();
+
+            document.getElementById('sleepModal').classList.add('active');
+
+            // Add listeners for duration preview
+            document.getElementById('sleepStartTime').addEventListener('change', updateSleepDurationPreview);
+            document.getElementById('sleepEndTime').addEventListener('change', updateSleepDurationPreview);
+        }
+
+        function closeSleepModal() {
+            document.getElementById('sleepModal').classList.remove('active');
+        }
+
+        // Format date for datetime-local input
+        function formatDateTimeLocal(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Update sleep end time visibility
+        function updateSleepEndVisibility() {
+            const status = document.querySelector('input[name="sleepStatus"]:checked').value;
+            const endGroup = document.getElementById('sleepEndGroup');
+
+            if (status === 'ongoing') {
+                endGroup.style.display = 'none';
             } else {
-                // Start sleep
-                appState.sleepStartTime = Date.now();
+                endGroup.style.display = 'block';
+            }
+
+            updateSleepDurationPreview();
+        }
+
+        // Update sleep duration preview
+        function updateSleepDurationPreview() {
+            const startInput = document.getElementById('sleepStartTime').value;
+            if (!startInput) {
+                document.getElementById('sleepDurationPreview').textContent = 'Duration: --';
+                return;
+            }
+
+            const start = new Date(startInput);
+            const status = document.querySelector('input[name="sleepStatus"]:checked').value;
+
+            let duration;
+            if (status === 'ongoing') {
+                duration = Date.now() - start.getTime();
+            } else {
+                const endInput = document.getElementById('sleepEndTime').value;
+                if (!endInput) {
+                    document.getElementById('sleepDurationPreview').textContent = 'Duration: --';
+                    return;
+                }
+                const end = new Date(endInput);
+                duration = end.getTime() - start.getTime();
+            }
+
+            if (duration < 0) {
+                document.getElementById('sleepDurationPreview').textContent = 'Duration: Invalid (end before start)';
+                document.getElementById('sleepDurationPreview').style.color = 'var(--danger)';
+                return;
+            }
+
+            const hours = Math.floor(duration / 3600000);
+            const mins = Math.floor((duration % 3600000) / 60000);
+            document.getElementById('sleepDurationPreview').textContent =
+                `Duration: ${hours}h ${mins}m`;
+            document.getElementById('sleepDurationPreview').style.color = 'var(--primary)';
+        }
+
+        // Log past sleep
+        function logPastSleep(event) {
+            event.preventDefault();
+
+            const startTime = new Date(document.getElementById('sleepStartTime').value).getTime();
+            const status = document.querySelector('input[name="sleepStatus"]:checked').value;
+
+            if (status === 'ongoing') {
+                // Start ongoing timer from past time
+                appState.sleepStartTime = startTime;
+                updateSleepTimerDisplay();
+                appState.sleepTimerInterval = setInterval(updateSleepTimerDisplay, 1000);
+                document.getElementById('sleepBanner').style.display = 'block';
                 document.getElementById('sleepIcon').textContent = '⏰';
                 document.getElementById('sleepLabel').textContent = 'End Sleep';
-                document.getElementById('sleepBanner').style.display = 'block';
+                document.getElementById('sleepQuickBtn').onclick = endSleepTimer;
+            } else {
+                // Log completed sleep
+                const endTime = new Date(document.getElementById('sleepEndTime').value).getTime();
+                const duration = endTime - startTime;
 
-                startSleepTimer();
-                saveState();
+                if (duration < 0) {
+                    alert('End time must be after start time!');
+                    return;
+                }
+
+                appState.activities.push({
+                    type: 'sleep',
+                    timestamp: startTime,
+                    duration: duration
+                });
             }
+
+            saveState();
+            updateUI();
+            closeSleepModal();
         }
 
-        function startSleepTimer() {
-            updateSleepTimer();
-            appState.sleepTimerInterval = setInterval(updateSleepTimer, 1000);
-        }
-
-        function updateSleepTimer() {
+        function updateSleepTimerDisplay() {
             if (!appState.sleepStartTime) return;
 
             const duration = Date.now() - appState.sleepStartTime;
@@ -2221,7 +2465,7 @@
         function saveSettings() {
             appState.babyName = document.getElementById('settingsBabyName').value;
             appState.feedingInterval = parseInt(document.getElementById('settingsInterval').value);
-            appState.milkFlowRate = parseInt(document.getElementById('settingsMilkFlow').value);
+            appState.milkFlowRate = parseFloat(document.getElementById('settingsMilkFlow').value);
 
             generateSchedule();
             saveState();
