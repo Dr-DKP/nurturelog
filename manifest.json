@@ -1,0 +1,28 @@
+{
+  "name": "Baby Care Tracker - Complete Feeding, Sleep & Health Monitor",
+  "short_name": "Baby Tracker",
+  "description": "Track your baby's feeding schedule, sleep patterns, diaper changes, health records, milestones, and growth. Perfect for new parents with pediatric-approved guidelines.",
+  "start_url": "./baby_tracker_enhanced.html",
+  "display": "standalone",
+  "background_color": "#fef3c7",
+  "theme_color": "#a855f7",
+  "orientation": "portrait",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "lifestyle", "productivity"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

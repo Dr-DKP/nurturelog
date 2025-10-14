@@ -1,0 +1,2400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#a855f7">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/svg+xml" href="./icon-192.svg">
+    <link rel="apple-touch-icon" href="./icon-192.svg">
+    <title>Baby Care Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #a855f7;
+            --primary-dark: #9333ea;
+            --secondary: #ec4899;
+            --accent: #14b8a6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: linear-gradient(135deg, #fef3c7 0%, #fde4e4 50%, #e0e7ff 100%);
+            --card: rgba(255, 255, 255, 0.95);
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 80px;
+            min-height: 100vh;
+        }
+
+        body.dark-mode {
+            --bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card: rgba(30, 41, 59, 0.95);
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --border: #334155;
+        }
+
+        /* Glass morphism effect */
+        .glass {
+            background: var(--card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .baby-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .icon-btn:active {
+            background: rgba(255,255,255,0.3);
+            transform: scale(0.9);
+        }
+
+        .install-btn {
+            background: rgba(255,255,255,0.95);
+            color: var(--primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .install-btn.show {
+            display: flex;
+        }
+
+        .install-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .install-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            display: none;
+            min-height: calc(100vh - 80px);
+            padding: 2rem 1rem;
+        }
+
+        .setup-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .setup-card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .setup-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .setup-subtitle {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--card);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-label {
+            display: block;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .radio-option input:checked + .radio-label {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            color: var(--primary);
+            font-weight: 700;
+            transform: scale(1.02);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Timer Card - Enhanced */
+        .timer-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 28px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse-bg 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-10px, -10px); }
+        }
+
+        .timer-label {
+            font-size: 1rem;
+            opacity: 0.95;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 1rem 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .timer-next {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .timer-status {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-ok {
+            background: rgba(16, 185, 129, 0.25);
+            color: #d1fae5;
+        }
+
+        .status-soon {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fef3c7;
+        }
+
+        .status-now {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fee2e2;
+            animation: blink 1s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Missed Feeding Alert */
+        .missed-alert {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 1rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .missed-alert-text {
+            flex: 1;
+        }
+
+        .missed-alert-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .missed-alert-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        /* Quick Actions - Enhanced */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-btn {
+            background: var(--card);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 1.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .quick-btn:active {
+            transform: scale(0.95);
+            border-color: var(--primary);
+        }
+
+        .quick-btn-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .quick-btn-label {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        /* Card - Enhanced */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text);
+        }
+
+        /* Stats Grid - Enhanced */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            font-weight: 600;
+        }
+
+        /* Timeline - Enhanced */
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.625rem;
+            top: 2rem;
+            bottom: -0.5rem;
+            width: 2px;
+            background: linear-gradient(180deg, var(--border) 0%, transparent 100%);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            border: 3px solid var(--border);
+            background: var(--card);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item.completed .timeline-dot {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--primary);
+            border-color: var(--primary);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
+        }
+
+        .timeline-item.missed .timeline-dot {
+            background: var(--danger);
+            border-color: var(--danger);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1.05rem;
+        }
+
+        .timeline-activity {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .timeline-countdown {
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        /* Modal - Enhanced */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            cursor: pointer;
+            color: var(--text-light);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        /* Bottom Navigation - Enhanced */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            padding: 0.5rem;
+            z-index: 99;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: none;
+        }
+
+        .main-content.active {
+            display: block;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Info Box - Enhanced */
+        .info-box {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-size: 1.05rem;
+        }
+
+        .info-box-text {
+            font-size: 0.95rem;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        /* Care Guide Styles */
+        .guide-section {
+            margin-bottom: 2rem;
+        }
+
+        .guide-section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .guide-content {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .guide-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .guide-content li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .guide-content li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));
+            border-left: 4px solid var(--danger);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .warning-box-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--danger);
+            font-size: 1.05rem;
+        }
+
+        /* Milk Flow Calculator */
+        .calculator-result {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(16, 185, 129, 0.1));
+            padding: 1rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+            text-align: center;
+            border: 2px solid var(--accent);
+        }
+
+        .calculator-result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .calculator-result-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Sleep Banner */
+        .sleep-active-banner {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .sleep-duration {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0.75rem 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Log Entry */
+        .log-entry {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .log-entry:hover {
+            background: rgba(168, 85, 247, 0.03);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-time {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 1.05rem;
+        }
+
+        .log-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-feed {
+            background: rgba(168, 85, 247, 0.15);
+            color: var(--primary);
+        }
+
+        .badge-sleep {
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+        }
+
+        .badge-diaper {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .log-details {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .timer-display {
+                font-size: 3rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .bottom-nav {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <div class="baby-name" id="headerBabyName">Baby Tracker</div>
+                <div style="font-size: 0.875rem; opacity: 0.9;" id="babyAge"></div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button class="install-btn" id="installBtn" onclick="installApp()">
+                    📥 Install App
+                </button>
+                <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">🌙</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Setup Screen -->
+    <div class="setup-screen active" id="setupScreen">
+        <div class="container">
+            <div class="setup-card">
+                <div class="setup-title">✨ Welcome to Baby Tracker ✨</div>
+                <div class="setup-subtitle">Let's set up your baby's personalized schedule</div>
+
+                <form id="setupForm" onsubmit="completeSetup(event)">
+                    <div class="form-group">
+                        <label class="form-label">Baby's Name</label>
+                        <input type="text" class="form-input" id="babyName" required placeholder="Enter baby's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-input" id="babyBirthdate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Feeding Interval</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" name="interval" value="120" id="interval2h">
+                                <label class="radio-label" for="interval2h">2 hours</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="interval" value="150" id="interval2.5h" checked>
+                                <label class="radio-label" for="interval2.5h">2.5 hours</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="interval" value="180" id="interval3h">
+                                <label class="radio-label" for="interval3h">3 hours</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" name="interval" value="210" id="interval3.5h">
+                                <label class="radio-label" for="interval3.5h">3.5 hours</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">First Feeding Time Today</label>
+                        <input type="time" class="form-input" id="firstFeedTime" required>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title">📋 Pediatric Guideline</div>
+                        <div class="info-box-text">
+                            <strong>Newborns (0-2 weeks):</strong> Feed every 2-3 hours<br>
+                            <strong>Infants (2-12 weeks):</strong> Feed every 2.5-3.5 hours<br>
+                            <strong>Older babies:</strong> Naturally adjust to longer intervals
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Start Tracking</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Home Tab -->
+        <div class="tab-content active" id="homeTab">
+            <div class="container">
+                <!-- Missed Feeding Alert -->
+                <div class="missed-alert" id="missedAlert" style="display: none;">
+                    <div class="missed-alert-text">
+                        <div class="missed-alert-title">⚠️ Feeding Overdue!</div>
+                        <div style="font-size: 0.9rem;">Log feeding or skip this one</div>
+                    </div>
+                    <button class="missed-alert-btn" onclick="showFeedModal()">Log Now</button>
+                    <button class="missed-alert-btn" onclick="skipMissedFeeding()">Skip</button>
+                </div>
+
+                <!-- Live Timer -->
+                <div class="timer-card" id="timerCard">
+                    <div class="timer-label">⏰ Time Until Next Feeding</div>
+                    <div class="timer-display" id="timerDisplay">--:--</div>
+                    <div class="timer-next" id="timerNext">Next feeding at --:--</div>
+                    <div class="timer-status status-ok" id="timerStatus">On Schedule</div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-btn" onclick="showFeedModal()">
+                        <div class="quick-btn-icon">🍼</div>
+                        <div class="quick-btn-label">Feed Now</div>
+                    </button>
+                    <button class="quick-btn" onclick="toggleSleep()">
+                        <div class="quick-btn-icon" id="sleepIcon">😴</div>
+                        <div class="quick-btn-label" id="sleepLabel">Start Sleep</div>
+                    </button>
+                    <button class="quick-btn" onclick="showDiaperModal()">
+                        <div class="quick-btn-icon">🚼</div>
+                        <div class="quick-btn-label">Log Diaper</div>
+                    </button>
+                    <button class="quick-btn" onclick="showHealthModal()">
+                        <div class="quick-btn-icon">💊</div>
+                        <div class="quick-btn-label">Health</div>
+                    </button>
+                </div>
+
+                <!-- Sleep Active Banner -->
+                <div class="sleep-active-banner" id="sleepBanner" style="display: none;">
+                    <div style="font-size: 1.1rem; font-weight: 600;">💤 Baby is Sleeping</div>
+                    <div class="sleep-duration" id="sleepDuration">0:00</div>
+                    <button class="btn" style="background: rgba(255,255,255,0.2);" onclick="toggleSleep()">Wake Up</button>
+                </div>
+
+                <!-- Today's Stats -->
+                <div class="card">
+                    <div class="card-title">📊 Today's Summary</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="todayFeedings">0</div>
+                            <div class="stat-label">Feedings</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="todayDiapers">0</div>
+                            <div class="stat-label">Diapers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="todaySleep">0h</div>
+                            <div class="stat-label">Sleep</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="todayMilk">0ml</div>
+                            <div class="stat-label">Total Milk</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Timeline -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>📅 Today's Schedule</span>
+                        <button class="icon-btn" onclick="regenerateSchedule()" style="width: 32px; height: 32px; font-size: 1rem;">🔄</button>
+                    </div>
+                    <div class="timeline" id="scheduleTimeline">
+                        <!-- Timeline items will be generated -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Tab -->
+        <div class="tab-content" id="activityTab">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">📝 Activity Log</div>
+                    <div id="activityLog">
+                        <div class="empty-state">
+                            <div class="empty-icon">📝</div>
+                            <div>No activities recorded yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div class="tab-content" id="statsTab">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">📈 Weekly Overview</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="weekFeedings">0</div>
+                            <div class="stat-label">Feedings (7d)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="weekDiapers">0</div>
+                            <div class="stat-label">Diapers (7d)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgSleep">0h</div>
+                            <div class="stat-label">Avg Sleep/Day</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="avgMilk">0ml</div>
+                            <div class="stat-label">Avg Milk/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">👶 Pediatric Guidelines</div>
+                    <div class="info-box">
+                        <div class="info-box-title">Age-Based Recommendations</div>
+                        <div class="info-box-text" id="guidelinesText">
+                            <!-- Will be populated based on baby's age -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Care Guide Tab -->
+        <div class="tab-content" id="guideTab">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">📚 Comprehensive Care Guide</div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">👶 Newborn Care (0-7 Days)</div>
+                        <div class="guide-content">
+                            <strong>Feeding:</strong>
+                            <ul>
+                                <li>Feed every 2-3 hours (8-12 times per day)</li>
+                                <li>Each feeding: 30-60ml (1-2 oz)</li>
+                                <li>Breastfeeding: 10-20 minutes per breast</li>
+                                <li>Watch for feeding cues: rooting, sucking, hands to mouth</li>
+                                <li>Never let newborn go more than 4 hours without feeding</li>
+                            </ul>
+                            <strong>Sleep:</strong>
+                            <ul>
+                                <li>Total sleep: 14-17 hours per day</li>
+                                <li>Sleep cycles: 2-4 hours at a time</li>
+                                <li>Always place baby on back to sleep (SIDS prevention)</li>
+                                <li>Room temperature: 68-72°F (20-22°C)</li>
+                            </ul>
+                            <strong>Umbilical Cord Care:</strong>
+                            <ul>
+                                <li>Keep cord stump clean and dry</li>
+                                <li>Fold diaper below cord</li>
+                                <li>Do not pull off - let it fall naturally (7-21 days)</li>
+                                <li>Call doctor if red, oozing, or foul-smelling</li>
+                            </ul>
+                            <strong>Jaundice Monitoring:</strong>
+                            <ul>
+                                <li>Peak at days 3-5</li>
+                                <li>Check skin/eyes in natural light</li>
+                                <li>If yellowing spreads to chest/abdomen, call doctor</li>
+                                <li>Frequent feeding helps clear bilirubin</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">🚨 Call Doctor Immediately If:</div>
+                        <div class="info-box-text">
+                            • Temperature above 100.4°F (38°C) - rectal<br>
+                            • Refusal to eat for multiple feedings<br>
+                            • Fewer than 6 wet diapers per day after day 5<br>
+                            • Yellow color spreading to arms/legs<br>
+                            • Excessive sleepiness or difficulty waking<br>
+                            • Vomiting (not just spit-up)<br>
+                            • Difficulty breathing or blue lips
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">🍼 Breastfeeding Tips</div>
+                        <div class="guide-content">
+                            <strong>Proper Latch:</strong>
+                            <ul>
+                                <li>Baby's mouth wide open covering areola</li>
+                                <li>Chin touching breast, nose free</li>
+                                <li>Lips flanged outward (not tucked in)</li>
+                                <li>Should hear swallowing, not clicking</li>
+                                <li>Pain indicates poor latch - try again</li>
+                            </ul>
+                            <strong>Feeding Positions:</strong>
+                            <ul>
+                                <li><strong>Cradle hold:</strong> Baby across lap, head in elbow</li>
+                                <li><strong>Football hold:</strong> Baby under arm, good for C-section</li>
+                                <li><strong>Side-lying:</strong> Both lying down, good for night feeds</li>
+                                <li><strong>Laid-back:</strong> Mom reclined, baby on chest</li>
+                            </ul>
+                            <strong>Milk Supply Tips:</strong>
+                            <ul>
+                                <li>Feed on demand, not by schedule</li>
+                                <li>Offer both breasts each feeding</li>
+                                <li>Stay hydrated (8-10 glasses water daily)</li>
+                                <li>Pump after feeding to increase supply</li>
+                                <li>Avoid pacifiers first 3-4 weeks</li>
+                            </ul>
+                            <strong>Common Issues:</strong>
+                            <ul>
+                                <li><strong>Engorgement:</strong> Nurse frequently, warm compress before</li>
+                                <li><strong>Sore nipples:</strong> Check latch, use lanolin cream</li>
+                                <li><strong>Blocked duct:</strong> Massage, warm compress, nurse often</li>
+                                <li><strong>Mastitis:</strong> Fever + painful breast = call doctor</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">🍶 Formula Feeding Guide</div>
+                        <div class="guide-content">
+                            <strong>Preparation:</strong>
+                            <ul>
+                                <li>Wash hands and sterilize bottles</li>
+                                <li>Use filtered or boiled water (cooled)</li>
+                                <li>Follow exact powder-to-water ratio</li>
+                                <li>Shake well to mix completely</li>
+                                <li>Test temperature on wrist (should be lukewarm)</li>
+                            </ul>
+                            <strong>Storage:</strong>
+                            <ul>
+                                <li>Prepared formula: use within 2 hours at room temp</li>
+                                <li>Refrigerated: use within 24 hours</li>
+                                <li>Once baby drinks from bottle: discard after 1 hour</li>
+                                <li>Never reheat formula in microwave</li>
+                            </ul>
+                            <strong>Feeding Amounts by Age:</strong>
+                            <ul>
+                                <li><strong>0-1 week:</strong> 30-60ml per feed</li>
+                                <li><strong>2-4 weeks:</strong> 60-90ml per feed</li>
+                                <li><strong>1-2 months:</strong> 90-120ml per feed</li>
+                                <li><strong>2-3 months:</strong> 120-150ml per feed</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">💤 Sleep Safety Guidelines</div>
+                        <div class="guide-content">
+                            <strong>ABC's of Safe Sleep:</strong>
+                            <ul>
+                                <li><strong>A</strong>lone - Baby sleeps alone in crib/bassinet</li>
+                                <li><strong>B</strong>ack - Always on back, never side or stomach</li>
+                                <li><strong>C</strong>rib - Firm mattress, fitted sheet, nothing else</li>
+                            </ul>
+                            <strong>Do NOT use:</strong>
+                            <ul>
+                                <li>Blankets, pillows, stuffed animals</li>
+                                <li>Crib bumpers or positioners</li>
+                                <li>Soft mattresses or waterbeds</li>
+                            </ul>
+                            <strong>SIDS Prevention:</strong>
+                            <ul>
+                                <li>Room-share for 6-12 months (not bed-share)</li>
+                                <li>Use pacifier at nap/bedtime (after breastfeeding established)</li>
+                                <li>Keep room cool (68-72°F)</li>
+                                <li>No smoking around baby</li>
+                                <li>Breastfeed if possible (reduces SIDS risk)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">🚼 Diaper & Bathing</div>
+                        <div class="guide-content">
+                            <strong>Expected Diaper Output:</strong>
+                            <ul>
+                                <li><strong>Day 1:</strong> 1-2 diapers (dark/tarry stool)</li>
+                                <li><strong>Day 2-3:</strong> 2-3 diapers (greenish stool)</li>
+                                <li><strong>Day 4-7:</strong> 6-8 wet + 3-4 dirty diapers</li>
+                                <li><strong>Week 2+:</strong> 6+ wet, 3-10 dirty per day</li>
+                            </ul>
+                            <strong>Diaper Rash Prevention:</strong>
+                            <ul>
+                                <li>Change every 2-3 hours and after each poop</li>
+                                <li>Clean gently with water wipes</li>
+                                <li>Pat dry completely before new diaper</li>
+                                <li>Apply barrier cream (zinc oxide) with each change</li>
+                                <li>Allow diaper-free time daily</li>
+                            </ul>
+                            <strong>Bathing (until cord falls off):</strong>
+                            <ul>
+                                <li>Sponge baths only - no submersion</li>
+                                <li>2-3 times per week is sufficient</li>
+                                <li>Water temperature: 98-100°F (test with elbow)</li>
+                                <li>Never leave baby unattended</li>
+                                <li>After cord falls: can do tub baths</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">😢 Soothing Techniques - The 5 S's</div>
+                        <div class="guide-content">
+                            <strong>Dr. Harvey Karp's Method:</strong>
+                            <ul>
+                                <li><strong>Swaddle:</strong> Wrap snugly (not too tight on hips)</li>
+                                <li><strong>Side/Stomach:</strong> Hold on side or stomach (while awake)</li>
+                                <li><strong>Shush:</strong> Loud white noise or "shhhh" sound</li>
+                                <li><strong>Swing:</strong> Gentle rhythmic motion</li>
+                                <li><strong>Suck:</strong> Pacifier or clean finger</li>
+                            </ul>
+                            <strong>Why Baby Cries:</strong>
+                            <ul>
+                                <li>Hungry (most common - try feeding first)</li>
+                                <li>Tired (overstimulation)</li>
+                                <li>Dirty diaper</li>
+                                <li>Too hot or cold</li>
+                                <li>Gas or colic</li>
+                                <li>Need to burp</li>
+                                <li>Just wants to be held</li>
+                            </ul>
+                            <strong>Gas Relief:</strong>
+                            <ul>
+                                <li>Burp after every 2-3 oz</li>
+                                <li>Bicycle legs exercise</li>
+                                <li>Tummy massage (clockwise circles)</li>
+                                <li>Warm bath</li>
+                                <li>Consult pediatrician about gas drops</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="guide-section">
+                        <div class="guide-section-title">💉 Vaccination Schedule</div>
+                        <div class="guide-content">
+                            <strong>Newborn-2 Months:</strong>
+                            <ul>
+                                <li><strong>Birth:</strong> Hepatitis B (1st dose)</li>
+                                <li><strong>2 months:</strong> DTaP, Hib, IPV, PCV13, Rotavirus, Hep B (2nd)</li>
+                            </ul>
+                            <strong>After Vaccines:</strong>
+                            <ul>
+                                <li>Mild fever and fussiness normal (24-48h)</li>
+                                <li>Apply cool compress to injection site</li>
+                                <li>Offer extra feeding and cuddles</li>
+                                <li>Call doctor if: High fever (>101°F), extreme drowsiness, seizures</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <div class="info-box-title">📱 Download This Guide</div>
+                        <div class="info-box-text">
+                            You can access this guide anytime offline by installing this app on your home screen!<br><br>
+                            <strong>Android:</strong> Tap menu (⋮) → "Install app" or "Add to Home screen"<br>
+                            <strong>iPhone:</strong> Tap Share → "Add to Home Screen"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-content" id="settingsTab">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">⚙️ Settings</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Baby's Name</label>
+                        <input type="text" class="form-input" id="settingsBabyName">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Feeding Interval</label>
+                        <select class="form-select" id="settingsInterval">
+                            <option value="120">2 hours</option>
+                            <option value="150">2.5 hours</option>
+                            <option value="180">3 hours</option>
+                            <option value="210">3.5 hours</option>
+                            <option value="240">4 hours</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Breast Milk Flow Rate (ml/min)</label>
+                        <select class="form-select" id="settingsMilkFlow" onchange="updateFlowRate()">
+                            <option value="3">3 ml/min (Newborn 0-7 days)</option>
+                            <option value="4">4 ml/min (Newborn 0-7 days)</option>
+                            <option value="5" selected>5 ml/min (Week 1-2)</option>
+                            <option value="6">6 ml/min (Week 2-3)</option>
+                            <option value="7">7 ml/min (Week 3-4)</option>
+                            <option value="8">8 ml/min (Month 1-2)</option>
+                            <option value="9">9 ml/min (Month 2+)</option>
+                            <option value="10">10 ml/min (Month 2+)</option>
+                        </select>
+                        <div id="flowCalculator" class="calculator-result" style="display: none; margin-top: 1rem;">
+                            <div class="calculator-result-value" id="flowEstimate">0 ml</div>
+                            <div class="calculator-result-label">Estimated intake for 15 min feeding</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💾 Data Management</div>
+                    <button class="btn btn-primary" style="margin-bottom: 0.75rem;" onclick="exportData()">📥 Export Data (JSON)</button>
+                    <button class="btn btn-primary" style="margin-bottom: 0.75rem;" onclick="exportCSV()">📊 Export to Excel (CSV)</button>
+                    <button class="btn" style="background: var(--danger); color: white;" onclick="resetApp()">🗑️ Reset All Data</button>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-box-title">ℹ️ About This App</div>
+                    <div class="info-box-text">
+                        Version 2.0 Enhanced<br>
+                        Featuring pediatric-approved guidelines<br>
+                        Works 100% offline • No account required<br>
+                        All data stored securely on your device
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feed Modal -->
+    <div class="modal" id="feedModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🍼 Log Feeding</div>
+                <button class="close-btn" onclick="closeFeedModal()">×</button>
+            </div>
+            <form onsubmit="logFeeding(event)">
+                <div class="form-group">
+                    <label class="form-label">Time of Feeding</label>
+                    <input type="datetime-local" class="form-input" id="feedTime">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Feeding Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="feedType" value="Breast-L" id="feedBreastL" checked>
+                            <label class="radio-label" for="feedBreastL">Breast (L)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="feedType" value="Breast-R" id="feedBreastR">
+                            <label class="radio-label" for="feedBreastR">Breast (R)</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="feedType" value="Bottle" id="feedBottle">
+                            <label class="radio-label" for="feedBottle">Bottle</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="feedType" value="Formula" id="feedFormula">
+                            <label class="radio-label" for="feedFormula">Formula</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Duration (minutes)</label>
+                    <input type="number" class="form-input" id="feedDuration" min="1" placeholder="e.g., 15" oninput="calculateMilkIntake()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount (ml) - Optional</label>
+                    <input type="number" class="form-input" id="feedAmount" min="0" placeholder="e.g., 90">
+                    <div id="milkEstimate" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light);"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <input type="text" class="form-input" id="feedNotes" placeholder="Any observations...">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log Feeding</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Diaper Modal -->
+    <div class="modal" id="diaperModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🚼 Log Diaper Change</div>
+                <button class="close-btn" onclick="closeDiaperModal()">×</button>
+            </div>
+            <form onsubmit="logDiaper(event)">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="diaperType" value="Wet" id="diaperWet" checked>
+                            <label class="radio-label" for="diaperWet">💧 Wet</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="diaperType" value="Dirty" id="diaperDirty">
+                            <label class="radio-label" for="diaperDirty">💩 Dirty</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="diaperType" value="Mixed" id="diaperMixed">
+                            <label class="radio-label" for="diaperMixed">Both</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <input type="text" class="form-input" id="diaperNotes" placeholder="Color, consistency...">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log Diaper</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Health Modal -->
+    <div class="modal" id="healthModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">💊 Health Log</div>
+                <button class="close-btn" onclick="closeHealthModal()">×</button>
+            </div>
+            <form onsubmit="logHealth(event)">
+                <div class="form-group">
+                    <label class="form-label">Type</label>
+                    <select class="form-select" id="healthType">
+                        <option value="Temperature">Temperature</option>
+                        <option value="Weight">Weight</option>
+                        <option value="Medicine">Medicine</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Value</label>
+                    <input type="text" class="form-input" id="healthValue" placeholder="e.g., 37.2°C or 4.5 kg" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <input type="text" class="form-input" id="healthNotes" placeholder="Additional details...">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Log Health Data</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" onclick="switchTab('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-btn" onclick="switchTab('activity')">
+            <div class="nav-icon">📊</div>
+            <div class="nav-label">Activity</div>
+        </button>
+        <button class="nav-btn" onclick="switchTab('stats')">
+            <div class="nav-icon">📈</div>
+            <div class="nav-label">Stats</div>
+        </button>
+        <button class="nav-btn" onclick="switchTab('guide')">
+            <div class="nav-icon">📚</div>
+            <div class="nav-label">Guide</div>
+        </button>
+        <button class="nav-btn" onclick="switchTab('settings')">
+            <div class="nav-icon">⚙️</div>
+            <div class="nav-label">Settings</div>
+        </button>
+    </div>
+
+    <script>
+        // App State
+        let appState = {
+            babyName: '',
+            babyBirthdate: '',
+            feedingInterval: 150,
+            milkFlowRate: 5, // ml per minute
+            schedule: [],
+            activities: [],
+            sleepStartTime: null,
+            sleepTimerInterval: null
+        };
+
+        // Initialize app
+        function initApp() {
+            const savedState = localStorage.getItem('babyTrackerState');
+            if (savedState) {
+                appState = JSON.parse(savedState);
+                // Ensure milkFlowRate exists for backward compatibility
+                if (!appState.milkFlowRate) {
+                    appState.milkFlowRate = calculateDefaultFlowRate();
+                }
+                document.getElementById('setupScreen').classList.remove('active');
+                document.getElementById('mainContent').classList.add('active');
+                updateUI();
+                startTimer();
+                if (appState.sleepStartTime) {
+                    startSleepTimer();
+                }
+            } else {
+                // Set default first feed time to now
+                const now = new Date();
+                document.getElementById('firstFeedTime').value =
+                    now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0');
+            }
+
+            // Show flow rate calculator
+            updateFlowRate();
+        }
+
+        // Calculate default flow rate based on age
+        function calculateDefaultFlowRate() {
+            if (!appState.babyBirthdate) return 5;
+
+            const birthDate = new Date(appState.babyBirthdate);
+            const ageInDays = Math.floor((Date.now() - birthDate.getTime()) / 86400000);
+
+            if (ageInDays <= 7) return 4;
+            else if (ageInDays <= 14) return 5;
+            else if (ageInDays <= 21) return 6;
+            else if (ageInDays <= 30) return 7;
+            else return 8;
+        }
+
+        // Update flow rate display
+        function updateFlowRate() {
+            const flowRate = parseInt(document.getElementById('settingsMilkFlow')?.value || appState.milkFlowRate);
+            const calculator = document.getElementById('flowCalculator');
+            if (calculator) {
+                calculator.style.display = 'block';
+                document.getElementById('flowEstimate').textContent = `${flowRate * 15} ml`;
+            }
+        }
+
+        // Calculate milk intake from duration
+        function calculateMilkIntake() {
+            const duration = parseInt(document.getElementById('feedDuration').value);
+            if (duration && duration > 0) {
+                const estimated = duration * appState.milkFlowRate;
+                document.getElementById('milkEstimate').textContent =
+                    `💡 Estimated intake: ~${estimated}ml (based on ${appState.milkFlowRate}ml/min flow rate)`;
+            } else {
+                document.getElementById('milkEstimate').textContent = '';
+            }
+        }
+
+        // Complete Setup
+        function completeSetup(event) {
+            event.preventDefault();
+
+            appState.babyName = document.getElementById('babyName').value;
+            appState.babyBirthdate = document.getElementById('babyBirthdate').value;
+            appState.feedingInterval = parseInt(document.querySelector('input[name="interval"]:checked').value);
+            appState.milkFlowRate = calculateDefaultFlowRate();
+
+            const firstFeedTime = document.getElementById('firstFeedTime').value;
+            const [hours, minutes] = firstFeedTime.split(':');
+            const firstFeed = new Date();
+            firstFeed.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+            // Log the first feeding
+            appState.activities = [{
+                type: 'feed',
+                timestamp: firstFeed.getTime(),
+                feedType: 'Initial Feed',
+                duration: 0,
+                amount: 0
+            }];
+
+            generateSchedule(firstFeed);
+            saveState();
+
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('mainContent').classList.add('active');
+
+            updateUI();
+            startTimer();
+        }
+
+        // Generate Daily Schedule
+        function generateSchedule(startTime = null) {
+            if (!startTime) {
+                const lastFeed = appState.activities.filter(a => a.type === 'feed').pop();
+                if (lastFeed) {
+                    startTime = new Date(lastFeed.timestamp);
+                } else {
+                    startTime = new Date();
+                }
+            }
+
+            appState.schedule = [];
+            let currentTime = new Date(startTime);
+            const endOfDay = new Date(currentTime);
+            endOfDay.setHours(23, 59, 59);
+
+            while (currentTime <= endOfDay) {
+                appState.schedule.push({
+                    time: new Date(currentTime).getTime(),
+                    type: 'feed',
+                    completed: false,
+                    missed: false
+                });
+                currentTime.setMinutes(currentTime.getMinutes() + appState.feedingInterval);
+            }
+
+            saveState();
+            renderSchedule();
+        }
+
+        // Render Schedule Timeline
+        function renderSchedule() {
+            const timeline = document.getElementById('scheduleTimeline');
+            const now = new Date().getTime();
+
+            if (appState.schedule.length === 0) {
+                timeline.innerHTML = '<div class="empty-state"><div>No schedule generated</div></div>';
+                return;
+            }
+
+            let html = '';
+            let foundActive = false;
+
+            appState.schedule.forEach((item, index) => {
+                const itemTime = new Date(item.time);
+                const isPast = item.time < now;
+                const isNext = !isPast && !foundActive;
+                const minutesUntil = Math.floor((item.time - now) / 60000);
+
+                // Mark as missed if 30+ minutes overdue and not completed
+                if (isPast && !item.completed && minutesUntil < -30) {
+                    item.missed = true;
+                }
+
+                let itemClass = '';
+                if (item.completed) itemClass = 'completed';
+                else if (item.missed) itemClass = 'missed';
+                else if (isNext) {
+                    itemClass = 'active';
+                    foundActive = true;
+                }
+
+                let statusText = '';
+                if (item.completed) statusText = '✓ Completed';
+                else if (item.missed) statusText = '⚠️ Missed';
+                else if (isNext) {
+                    if (minutesUntil > 0) statusText = `in ${minutesUntil} min`;
+                    else statusText = '<span style="color: var(--danger);">Now!</span>';
+                }
+
+                html += `<div class="timeline-item ${itemClass}">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-time">${formatTime(itemTime)}</div>
+                    <div class="timeline-activity">Feeding Time</div>
+                    ${statusText ? `<div class="timeline-countdown">${statusText}</div>` : ''}
+                </div>`;
+            });
+
+            timeline.innerHTML = html;
+        }
+
+        // Timer Update
+        let timerInterval;
+        function startTimer() {
+            updateTimer();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const nextFeed = appState.schedule.find(item => !item.completed && !item.missed);
+
+            if (!nextFeed) {
+                document.getElementById('timerDisplay').textContent = 'Done!';
+                document.getElementById('timerNext').textContent = 'All scheduled feedings completed';
+                document.getElementById('missedAlert').style.display = 'none';
+                return;
+            }
+
+            const now = Date.now();
+            const diff = nextFeed.time - now;
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+
+            // Check for missed feeding (more than 15 minutes overdue)
+            if (minutes < -15 && !nextFeed.missed) {
+                document.getElementById('missedAlert').style.display = 'flex';
+            } else {
+                document.getElementById('missedAlert').style.display = 'none';
+            }
+
+            // Update display
+            const hours = Math.floor(Math.abs(minutes) / 60);
+            const mins = Math.abs(minutes) % 60;
+
+            if (minutes < 0) {
+                document.getElementById('timerDisplay').textContent = `OVERDUE`;
+                document.getElementById('timerNext').textContent =
+                    `Feeding was due ${hours > 0 ? hours + 'h ' : ''}${mins}m ago`;
+            } else if (minutes >= 60) {
+                document.getElementById('timerDisplay').textContent =
+                    `${hours}:${mins.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                document.getElementById('timerDisplay').textContent =
+                    `${mins}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            document.getElementById('timerNext').textContent =
+                `Next feeding at ${formatTime(new Date(nextFeed.time))}`;
+
+            // Update status
+            const statusEl = document.getElementById('timerStatus');
+            const timerCard = document.getElementById('timerCard');
+
+            if (minutes < 0) {
+                statusEl.className = 'timer-status status-now';
+                statusEl.textContent = 'Overdue!';
+                timerCard.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            } else if (minutes > 30) {
+                statusEl.className = 'timer-status status-ok';
+                statusEl.textContent = 'On Schedule';
+                timerCard.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+            } else if (minutes > 0) {
+                statusEl.className = 'timer-status status-soon';
+                statusEl.textContent = 'Coming Soon';
+                timerCard.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            } else {
+                statusEl.className = 'timer-status status-now';
+                statusEl.textContent = 'Time to Feed!';
+                timerCard.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            }
+
+            renderSchedule();
+        }
+
+        // Skip missed feeding
+        function skipMissedFeeding() {
+            const nextFeed = appState.schedule.find(item => !item.completed && !item.missed);
+            if (nextFeed) {
+                nextFeed.missed = true;
+                nextFeed.skipped = true;
+            }
+            saveState();
+            updateUI();
+        }
+
+        // Show Feed Modal
+        function showFeedModal() {
+            // Set current time as default
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('feedTime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+            document.getElementById('feedModal').classList.add('active');
+        }
+
+        function closeFeedModal() {
+            document.getElementById('feedModal').classList.remove('active');
+        }
+
+        // Log Feeding
+        function logFeeding(event) {
+            event.preventDefault();
+
+            const feedTimeInput = document.getElementById('feedTime').value;
+            const feedTimestamp = feedTimeInput ? new Date(feedTimeInput).getTime() : Date.now();
+
+            const feedType = document.querySelector('input[name="feedType"]:checked').value;
+            const duration = parseInt(document.getElementById('feedDuration').value) || 0;
+            let amount = parseInt(document.getElementById('feedAmount').value) || 0;
+
+            // If no amount specified but duration given, calculate estimate
+            if (amount === 0 && duration > 0) {
+                amount = duration * appState.milkFlowRate;
+            }
+
+            const notes = document.getElementById('feedNotes').value;
+
+            const activity = {
+                type: 'feed',
+                timestamp: feedTimestamp,
+                feedType: feedType,
+                duration: duration,
+                amount: amount,
+                notes: notes
+            };
+
+            appState.activities.push(activity);
+
+            // Mark scheduled feed as completed
+            const tolerance = 30 * 60000; // 30 minutes
+            const matchingFeed = appState.schedule.find(item =>
+                Math.abs(item.time - feedTimestamp) < tolerance && !item.completed
+            );
+            if (matchingFeed) {
+                matchingFeed.completed = true;
+            }
+
+            // If feeding is current or future, regenerate schedule
+            if (feedTimestamp >= Date.now() - tolerance) {
+                generateSchedule(new Date(feedTimestamp));
+            }
+
+            saveState();
+            updateUI();
+            closeFeedModal();
+
+            // Reset form
+            document.getElementById('feedDuration').value = '';
+            document.getElementById('feedAmount').value = '';
+            document.getElementById('feedNotes').value = '';
+            document.getElementById('milkEstimate').textContent = '';
+        }
+
+        // Sleep Tracking
+        function toggleSleep() {
+            if (appState.sleepStartTime) {
+                // End sleep
+                const duration = Date.now() - appState.sleepStartTime;
+                appState.activities.push({
+                    type: 'sleep',
+                    timestamp: appState.sleepStartTime,
+                    duration: duration
+                });
+
+                appState.sleepStartTime = null;
+                clearInterval(appState.sleepTimerInterval);
+
+                document.getElementById('sleepIcon').textContent = '😴';
+                document.getElementById('sleepLabel').textContent = 'Start Sleep';
+                document.getElementById('sleepBanner').style.display = 'none';
+
+                saveState();
+                updateUI();
+            } else {
+                // Start sleep
+                appState.sleepStartTime = Date.now();
+                document.getElementById('sleepIcon').textContent = '⏰';
+                document.getElementById('sleepLabel').textContent = 'End Sleep';
+                document.getElementById('sleepBanner').style.display = 'block';
+
+                startSleepTimer();
+                saveState();
+            }
+        }
+
+        function startSleepTimer() {
+            updateSleepTimer();
+            appState.sleepTimerInterval = setInterval(updateSleepTimer, 1000);
+        }
+
+        function updateSleepTimer() {
+            if (!appState.sleepStartTime) return;
+
+            const duration = Date.now() - appState.sleepStartTime;
+            const hours = Math.floor(duration / 3600000);
+            const minutes = Math.floor((duration % 3600000) / 60000);
+
+            document.getElementById('sleepDuration').textContent =
+                `${hours}:${minutes.toString().padStart(2, '0')}`;
+        }
+
+        // Show Diaper Modal
+        function showDiaperModal() {
+            document.getElementById('diaperModal').classList.add('active');
+        }
+
+        function closeDiaperModal() {
+            document.getElementById('diaperModal').classList.remove('active');
+        }
+
+        // Log Diaper
+        function logDiaper(event) {
+            event.preventDefault();
+
+            const diaperType = document.querySelector('input[name="diaperType"]:checked').value;
+            const notes = document.getElementById('diaperNotes').value;
+
+            appState.activities.push({
+                type: 'diaper',
+                timestamp: Date.now(),
+                diaperType: diaperType,
+                notes: notes
+            });
+
+            saveState();
+            updateUI();
+            closeDiaperModal();
+
+            document.getElementById('diaperNotes').value = '';
+        }
+
+        // Show Health Modal
+        function showHealthModal() {
+            document.getElementById('healthModal').classList.add('active');
+        }
+
+        function closeHealthModal() {
+            document.getElementById('healthModal').classList.remove('active');
+        }
+
+        // Log Health
+        function logHealth(event) {
+            event.preventDefault();
+
+            const healthType = document.getElementById('healthType').value;
+            const value = document.getElementById('healthValue').value;
+            const notes = document.getElementById('healthNotes').value;
+
+            appState.activities.push({
+                type: 'health',
+                timestamp: Date.now(),
+                healthType: healthType,
+                value: value,
+                notes: notes
+            });
+
+            saveState();
+            updateUI();
+            closeHealthModal();
+
+            document.getElementById('healthValue').value = '';
+            document.getElementById('healthNotes').value = '';
+        }
+
+        // Update UI
+        function updateUI() {
+            // Update header
+            document.getElementById('headerBabyName').textContent = appState.babyName;
+
+            // Calculate age
+            if (appState.babyBirthdate) {
+                const birthDate = new Date(appState.babyBirthdate);
+                const ageInDays = Math.floor((Date.now() - birthDate.getTime()) / 86400000);
+
+                if (ageInDays < 7) {
+                    document.getElementById('babyAge').textContent = `${ageInDays} days old`;
+                } else if (ageInDays < 60) {
+                    const weeks = Math.floor(ageInDays / 7);
+                    document.getElementById('babyAge').textContent = `${weeks} weeks old`;
+                } else {
+                    const months = Math.floor(ageInDays / 30);
+                    document.getElementById('babyAge').textContent = `${months} months old`;
+                }
+
+                updateGuidelines(ageInDays);
+            }
+
+            // Update today's stats
+            const today = new Date().setHours(0, 0, 0, 0);
+            const todayActivities = appState.activities.filter(a => a.timestamp >= today);
+
+            const feedings = todayActivities.filter(a => a.type === 'feed');
+            const diapers = todayActivities.filter(a => a.type === 'diaper');
+            const sleeps = todayActivities.filter(a => a.type === 'sleep');
+
+            document.getElementById('todayFeedings').textContent = feedings.length;
+            document.getElementById('todayDiapers').textContent = diapers.length;
+
+            const totalSleep = sleeps.reduce((sum, s) => sum + (s.duration || 0), 0);
+            const sleepHours = Math.floor(totalSleep / 3600000);
+            const sleepMins = Math.floor((totalSleep % 3600000) / 60000);
+            document.getElementById('todaySleep').textContent = sleepHours > 0 ?
+                `${sleepHours}h ${sleepMins}m` : `${sleepMins}m`;
+
+            const totalMilk = feedings.reduce((sum, f) => sum + (f.amount || 0), 0);
+            document.getElementById('todayMilk').textContent = `${totalMilk}ml`;
+
+            // Update weekly stats
+            const weekAgo = Date.now() - 7 * 86400000;
+            const weekActivities = appState.activities.filter(a => a.timestamp >= weekAgo);
+
+            document.getElementById('weekFeedings').textContent =
+                weekActivities.filter(a => a.type === 'feed').length;
+            document.getElementById('weekDiapers').textContent =
+                weekActivities.filter(a => a.type === 'diaper').length;
+
+            const weekSleeps = weekActivities.filter(a => a.type === 'sleep');
+            const avgSleepPerDay = weekSleeps.reduce((sum, s) => sum + (s.duration || 0), 0) / 7;
+            const avgHours = Math.floor(avgSleepPerDay / 3600000);
+            document.getElementById('avgSleep').textContent = `${avgHours}h`;
+
+            const weekFeeds = weekActivities.filter(a => a.type === 'feed');
+            const avgMilkPerDay = weekFeeds.reduce((sum, f) => sum + (f.amount || 0), 0) / 7;
+            document.getElementById('avgMilk').textContent = `${Math.round(avgMilkPerDay)}ml`;
+
+            // Update activity log
+            renderActivityLog();
+            renderSchedule();
+        }
+
+        // Render Activity Log
+        function renderActivityLog() {
+            const log = document.getElementById('activityLog');
+
+            if (appState.activities.length === 0) {
+                log.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div>No activities recorded yet</div></div>';
+                return;
+            }
+
+            const sorted = [...appState.activities].sort((a, b) => b.timestamp - a.timestamp);
+            let html = '';
+
+            sorted.forEach(activity => {
+                const time = new Date(activity.timestamp);
+                let badge = '';
+                let details = '';
+
+                if (activity.type === 'feed') {
+                    badge = 'badge-feed';
+                    details = `${activity.feedType}`;
+                    if (activity.duration) details += ` • ${activity.duration} min`;
+                    if (activity.amount) details += ` • ${activity.amount}ml`;
+                    if (activity.notes) details += ` • ${activity.notes}`;
+                } else if (activity.type === 'sleep') {
+                    badge = 'badge-sleep';
+                    const hours = Math.floor(activity.duration / 3600000);
+                    const mins = Math.floor((activity.duration % 3600000) / 60000);
+                    details = `Slept ${hours > 0 ? hours + 'h ' : ''}${mins}m`;
+                } else if (activity.type === 'diaper') {
+                    badge = 'badge-diaper';
+                    details = activity.diaperType;
+                    if (activity.notes) details += ` • ${activity.notes}`;
+                } else if (activity.type === 'health') {
+                    badge = 'badge-feed';
+                    details = `${activity.healthType}: ${activity.value}`;
+                    if (activity.notes) details += ` • ${activity.notes}`;
+                }
+
+                html += `<div class="log-entry">
+                    <div class="log-header">
+                        <div class="log-time">${formatTime(time)}</div>
+                        <div class="log-badge ${badge}">${activity.type.toUpperCase()}</div>
+                    </div>
+                    <div class="log-details">${details}</div>
+                </div>`;
+            });
+
+            log.innerHTML = html;
+        }
+
+        // Update Guidelines
+        function updateGuidelines(ageInDays) {
+            const guidelines = document.getElementById('guidelinesText');
+            let text = '';
+
+            if (ageInDays <= 14) {
+                text = `<strong>Newborn (${ageInDays} days old)</strong><br>
+                • Feed every 2-3 hours (8-12 times/day)<br>
+                • 30-60ml per feed (breastfed) or 60-90ml (formula)<br>
+                • 14-17 hours sleep/day<br>
+                • 6-8 wet diapers/day<br>
+                • Watch for jaundice (yellowing skin/eyes)<br>
+                • Umbilical cord care until it falls off`;
+            } else if (ageInDays <= 60) {
+                const weeks = Math.floor(ageInDays / 7);
+                text = `<strong>Infant (${weeks} weeks old)</strong><br>
+                • Feed every 2.5-3.5 hours<br>
+                • 60-120ml per feed<br>
+                • 14-16 hours sleep/day<br>
+                • 5-7 wet diapers/day<br>
+                • Expect growth spurts at weeks 3, 6<br>
+                • Begin smiling and cooing`;
+            } else {
+                const months = Math.floor(ageInDays / 30);
+                text = `<strong>${months} months old</strong><br>
+                • Feed every 3-4 hours<br>
+                • 120-180ml per feed<br>
+                • 12-15 hours sleep/day<br>
+                • 4-6 wet diapers/day<br>
+                • May sleep 6-8 hours at night<br>
+                • Growing social awareness`;
+            }
+
+            guidelines.innerHTML = text;
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+
+            if (tab === 'settings') {
+                loadSettings();
+            }
+        }
+
+        // Settings
+        function loadSettings() {
+            document.getElementById('settingsBabyName').value = appState.babyName;
+            document.getElementById('settingsInterval').value = appState.feedingInterval;
+            document.getElementById('settingsMilkFlow').value = appState.milkFlowRate || 5;
+            updateFlowRate();
+        }
+
+        function saveSettings() {
+            appState.babyName = document.getElementById('settingsBabyName').value;
+            appState.feedingInterval = parseInt(document.getElementById('settingsInterval').value);
+            appState.milkFlowRate = parseInt(document.getElementById('settingsMilkFlow').value);
+
+            generateSchedule();
+            saveState();
+            updateUI();
+
+            alert('✓ Settings saved successfully!');
+        }
+
+        // Regenerate Schedule
+        function regenerateSchedule() {
+            if (confirm('Regenerate schedule from last feeding?')) {
+                generateSchedule();
+                updateUI();
+            }
+        }
+
+        // Dark Mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // PWA Install Function
+        async function installApp() {
+            if (!deferredPrompt) {
+                // If no prompt available, show instructions
+                alert('To install this app:\n\n' +
+                      'Android Chrome: Menu (⋮) → "Install app" or "Add to Home screen"\n\n' +
+                      'iPhone Safari: Share button → "Add to Home Screen"\n\n' +
+                      'Desktop Chrome: Look for install icon in address bar\n\n' +
+                      'Note: App must be served over HTTPS (not file://)');
+                return;
+            }
+
+            // Show the install prompt
+            deferredPrompt.prompt();
+
+            // Wait for the user to respond to the prompt
+            const { outcome } = await deferredPrompt.userChoice;
+
+            console.log(`User response to the install prompt: ${outcome}`);
+
+            if (outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+
+            // Clear the deferredPrompt so it can only be used once
+            deferredPrompt = null;
+            installBtn.classList.remove('show');
+        }
+
+        // Export Data
+        function exportData() {
+            const dataStr = JSON.stringify(appState, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `baby-tracker-backup-${Date.now()}.json`;
+            a.click();
+        }
+
+        function exportCSV() {
+            let csv = 'Timestamp,Type,Details\n';
+
+            appState.activities.forEach(activity => {
+                const time = new Date(activity.timestamp).toISOString();
+                let details = '';
+
+                if (activity.type === 'feed') {
+                    details = `"${activity.feedType}, ${activity.duration}min, ${activity.amount}ml"`;
+                } else if (activity.type === 'sleep') {
+                    details = `"${Math.floor(activity.duration / 60000)} minutes"`;
+                } else if (activity.type === 'diaper') {
+                    details = `"${activity.diaperType}"`;
+                } else if (activity.type === 'health') {
+                    details = `"${activity.healthType}: ${activity.value}"`;
+                }
+
+                csv += `${time},${activity.type},${details}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `baby-tracker-${Date.now()}.csv`;
+            a.click();
+        }
+
+        function resetApp() {
+            if (confirm('⚠️ Are you sure? This will delete ALL data and cannot be undone!')) {
+                if (confirm('Really sure? This is your last chance!')) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        }
+
+        // Utility Functions
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function saveState() {
+            localStorage.setItem('babyTrackerState', JSON.stringify(appState));
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            initApp();
+
+            // Restore dark mode
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+            }
+
+            // PWA Install functionality
+            let deferredPrompt;
+            const installBtn = document.getElementById('installBtn');
+
+            // Listen for beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+                // Stash the event so it can be triggered later
+                deferredPrompt = e;
+                // Show the install button
+                installBtn.classList.add('show');
+                console.log('Install prompt available');
+            });
+
+            // Handle app installed event
+            window.addEventListener('appinstalled', () => {
+                console.log('PWA was installed');
+                installBtn.classList.remove('show');
+                deferredPrompt = null;
+            });
+        });
+
+        // Prevent accidental page close
+        window.addEventListener('beforeunload', (e) => {
+            if (appState.activities.length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Close modal on backdrop click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
