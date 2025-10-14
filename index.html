@@ -515,6 +515,55 @@
             letter-spacing: -0.01em;
         }
 
+        /* Diaper Info Display */
+        .diaper-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .diaper-time {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .diaper-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .diaper-type {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            border: 2px solid rgba(168, 85, 247, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .diaper-ago {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .diaper-notes {
+            background: rgba(168, 85, 247, 0.05);
+            padding: 0.75rem;
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-style: italic;
+            border-left: 3px solid rgba(168, 85, 247, 0.3);
+        }
+
         /* Timeline - Enhanced */
         .timeline-item {
             position: relative;
@@ -1147,6 +1196,19 @@
                             <div class="stat-value" id="todayMilk">0ml</div>
                             <div class="stat-label">Total Milk</div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Last Diaper Change Info -->
+                <div class="card" id="lastDiaperCard" style="display: none;">
+                    <div class="card-title">🚼 Last Diaper Change</div>
+                    <div class="diaper-info">
+                        <div class="diaper-time" id="lastDiaperTime">--</div>
+                        <div class="diaper-details">
+                            <span class="diaper-type" id="lastDiaperType">--</span>
+                            <span class="diaper-ago" id="lastDiaperAgo">--</span>
+                        </div>
+                        <div class="diaper-notes" id="lastDiaperNotes" style="display: none;"></div>
                     </div>
                 </div>
 
@@ -2343,6 +2405,9 @@
             document.getElementById('todayFeedings').textContent = feedings.length;
             document.getElementById('todayDiapers').textContent = diapers.length;
 
+            // Update last diaper change info
+            updateLastDiaperInfo();
+
             const totalSleep = sleeps.reduce((sum, s) => sum + (s.duration || 0), 0);
             const sleepHours = Math.floor(totalSleep / 3600000);
             const sleepMins = Math.floor((totalSleep % 3600000) / 60000);
@@ -2459,6 +2524,59 @@
             }
 
             guidelines.innerHTML = text;
+        }
+
+        // Update Last Diaper Change Info
+        function updateLastDiaperInfo() {
+            // Get all diapers sorted by most recent
+            const diapers = appState.activities
+                .filter(a => a.type === 'diaper')
+                .sort((a, b) => b.timestamp - a.timestamp);
+
+            const lastDiaperCard = document.getElementById('lastDiaperCard');
+
+            if (diapers.length === 0) {
+                lastDiaperCard.style.display = 'none';
+                return;
+            }
+
+            lastDiaperCard.style.display = 'block';
+
+            const lastDiaper = diapers[0];
+            const now = Date.now();
+            const timeSince = now - lastDiaper.timestamp;
+
+            // Format time
+            const hours = Math.floor(timeSince / 3600000);
+            const mins = Math.floor((timeSince % 3600000) / 60000);
+
+            // Update display with formatted time
+            document.getElementById('lastDiaperTime').textContent = formatTime(lastDiaper.timestamp);
+
+            // Show type with emoji
+            let typeText = lastDiaper.diaperType;
+            if (lastDiaper.diaperType === 'Wet') typeText = '💧 Wet';
+            else if (lastDiaper.diaperType === 'Dirty') typeText = '💩 Dirty';
+            else if (lastDiaper.diaperType === 'Mixed') typeText = '💧💩 Both';
+
+            document.getElementById('lastDiaperType').textContent = typeText;
+
+            // Show time ago
+            let agoText = '';
+            if (hours > 0) agoText = `${hours}h ${mins}m ago`;
+            else if (mins > 0) agoText = `${mins}m ago`;
+            else agoText = 'Just now';
+
+            document.getElementById('lastDiaperAgo').textContent = agoText;
+
+            // Show notes if present
+            const notesEl = document.getElementById('lastDiaperNotes');
+            if (lastDiaper.notes) {
+                notesEl.textContent = `Note: ${lastDiaper.notes}`;
+                notesEl.style.display = 'block';
+            } else {
+                notesEl.style.display = 'none';
+            }
         }
 
         // Tab Switching
