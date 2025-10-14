@@ -2332,8 +2332,14 @@
         }
 
         // Log Diaper
+        let isDiaperLogging = false;
+
         function logDiaper(event) {
             event.preventDefault();
+
+            // Prevent double-submit
+            if (isDiaperLogging) return false;
+            isDiaperLogging = true;
 
             // Get custom time from input field
             const diaperTimeInput = document.getElementById('diaperTime').value;
@@ -2351,10 +2357,19 @@
 
             saveState();
             updateUI();
-            closeDiaperModal();
 
             // Clear form
             document.getElementById('diaperNotes').value = '';
+
+            // Close modal
+            closeDiaperModal();
+
+            // Reset flag after modal closes
+            setTimeout(() => {
+                isDiaperLogging = false;
+            }, 500);
+
+            return false;
         }
 
         // Show Health Modal
@@ -2570,7 +2585,7 @@
             const mins = Math.floor((timeSince % 3600000) / 60000);
 
             // Update display with formatted time
-            document.getElementById('lastDiaperTime').textContent = formatTime(lastDiaper.timestamp);
+            document.getElementById('lastDiaperTime').textContent = formatTime(new Date(lastDiaper.timestamp));
 
             // Show type with emoji
             let typeText = lastDiaper.diaperType;
