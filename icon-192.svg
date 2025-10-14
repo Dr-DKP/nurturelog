@@ -1,20 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#14b8a6;stop-opacity:1" />
     </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="42" fill="url(#grad1)"/>
-  <circle cx="96" cy="70" r="35" fill="#fff" opacity="0.95"/>
-  <ellipse cx="88" cy="68" rx="5" ry="7" fill="#a855f7"/>
-  <ellipse cx="104" cy="68" rx="5" ry="7" fill="#a855f7"/>
-  <path d="M 88 78 Q 96 85 104 78" stroke="#a855f7" stroke-width="3" fill="none" stroke-linecap="round"/>
-  <circle cx="72" cy="50" r="18" fill="#fff" opacity="0.95"/>
-  <circle cx="120" cy="50" r="18" fill="#fff" opacity="0.95"/>
-  <path d="M 60 120 Q 96 150 132 120" fill="#fff" opacity="0.95"/>
-  <circle cx="76" cy="130" r="8" fill="#a855f7" opacity="0.5"/>
-  <circle cx="96" cy="140" r="10" fill="#ec4899" opacity="0.5"/>
-  <circle cx="116" cy="130" r="8" fill="#a855f7" opacity="0.5"/>
-  <text x="96" y="175" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#fff" text-anchor="middle">👶</text>
+
+  <!-- Background with rounded corners -->
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad)"/>
+
+  <!-- Baby face (simplified and modern) -->
+  <circle cx="96" cy="75" r="38" fill="#ffffff" opacity="0.98"/>
+
+  <!-- Eyes -->
+  <circle cx="86" cy="72" r="5" fill="#a855f7"/>
+  <circle cx="106" cy="72" r="5" fill="#a855f7"/>
+
+  <!-- Cute smile -->
+  <path d="M 83 83 Q 96 90 109 83" stroke="#ec4899" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Sparkle/care elements around baby -->
+  <circle cx="62" cy="55" r="6" fill="#ffffff" opacity="0.9"/>
+  <circle cx="130" cy="55" r="6" fill="#ffffff" opacity="0.9"/>
+  <circle cx="70" cy="95" r="4" fill="#ffffff" opacity="0.8"/>
+  <circle cx="122" cy="95" r="4" fill="#ffffff" opacity="0.8"/>
+
+  <!-- Growth/nurture symbol (leaf shape) -->
+  <path d="M 96 115 Q 75 125 70 145 Q 75 140 96 135 Q 117 140 122 145 Q 117 125 96 115" fill="#ffffff" opacity="0.95"/>
+
+  <!-- Log/tracking dots (representing data points) -->
+  <circle cx="50" cy="140" r="5" fill="#ffffff" opacity="0.85"/>
+  <circle cx="70" cy="155" r="5" fill="#ffffff" opacity="0.85"/>
+  <circle cx="96" cy="163" r="5" fill="#ffffff" opacity="0.85"/>
+  <circle cx="122" cy="155" r="5" fill="#ffffff" opacity="0.85"/>
+  <circle cx="142" cy="140" r="5" fill="#ffffff" opacity="0.85"/>
+
+  <!-- Connecting line through dots -->
+  <path d="M 50 140 L 70 155 L 96 163 L 122 155 L 142 140" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
 </svg>
