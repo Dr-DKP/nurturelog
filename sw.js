@@ -1,8 +1,8 @@
-// Service Worker for Baby Tracker PWA
-const CACHE_NAME = 'baby-tracker-v1';
+// Service Worker for NurtureLog PWA
+const CACHE_NAME = 'nurturelog-v1';
 const urlsToCache = [
   './',
-  './baby_tracker_enhanced.html',
+  './index.html',
   './manifest.json'
 ];
 

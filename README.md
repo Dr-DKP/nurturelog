@@ -1,6 +1,12 @@
-# 👶 Baby Care Tracker - Complete PWA
+# 🌱 NurtureLog - Smart Baby Care Tracker
 
-A comprehensive Progressive Web App for tracking your baby's feeding, sleep, health, milestones, and more. Features pediatric-approved guidelines and works 100% offline.
+[![PWA](https://img.shields.io/badge/PWA-enabled-blue.svg)](https://developers.google.com/web/progressive-web-apps/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/demo-live-success.svg)](https://dr-dkp.github.io/nurturelog/)
+
+A comprehensive Progressive Web App for tracking your baby's feeding schedules, sleep patterns, health records, developmental milestones, and more. Features medically accurate, pediatric-approved guidelines and works 100% offline.
+
+**Perfect for:** New parents, caregivers, pediatrician visits, newborn care (0-12 months)
 
 ## ✨ Features
 
@@ -15,9 +21,10 @@ A comprehensive Progressive Web App for tracking your baby's feeding, sleep, hea
 
 ### Smart Features
 - **Missed Feeding Alerts** - Visual warnings when feedings are overdue
-- **Breast Milk Flow Calculator** - Estimate intake by age (3-10ml/min)
+- **Medically Accurate Flow Calculator** - Estimate intake by age (0.5-5ml/min based on research)
 - **Auto-Schedule Generation** - Creates full-day feeding schedule
 - **Age-Based Guidelines** - Automatic recommendations as baby grows
+- **Manual Time Entry** - Backdate sleep/feeding logs if you forgot to start timer
 - **Dark Mode** - Perfect for night feedings
 - **Comprehensive Care Guide** - Midwife-approved medical information
 
@@ -130,8 +137,8 @@ Once served over HTTPS:
 
 **Milk Flow Calculator:**
 - Settings → Milk Flow Rate
-- Choose age-appropriate rate (3-10ml/min)
-- Auto-estimates intake: "15 min = ~75ml"
+- Choose age-appropriate rate (0.5-5ml/min - medically accurate)
+- Auto-estimates intake: "15 min = ~22ml" (for newborns)
 
 **Pumping Tracker:**
 - Log pump sessions with time and amounts
@@ -287,3 +294,13 @@ Free to use, share, and modify. No attribution required.
 4. **Track** your baby's journey!
 
 Happy parenting! 👶💕
+
+---
+
+## 🔍 Keywords & Topics
+
+**For GitHub Discovery:**
+baby-tracker • progressive-web-app • newborn-care • pediatric-health • parenting-app • feeding-tracker • sleep-tracker • offline-first • medical-tracking • baby-care • infant-health • pwa • breastfeeding • baby-monitor • childcare • newborn-tracking • baby-journal • parenting-tools • baby-log • healthcare
+
+**Technologies:**
+JavaScript • PWA • Service Worker • LocalStorage • Responsive Design • Mobile-First • Offline Capable • HTML5 • CSS3
