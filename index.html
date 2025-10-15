@@ -1330,6 +1330,153 @@
             }
         }
 
+        /* Export Data Section */
+        .export-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .export-options {
+            margin-bottom: 0.5rem;
+        }
+
+        .export-option {
+            max-width: 300px;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.15));
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-main);
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.2);
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+        }
+
+        .export-btn:active {
+            transform: translateY(0);
+        }
+
+        .csv-btn {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+        }
+
+        .csv-btn:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .json-btn {
+            border-color: rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15));
+        }
+
+        .json-btn:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2));
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .export-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .export-btn {
+                padding: 1rem;
+            }
+        }
+
+        /* Pattern Insights */
+        .insights-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            border-left: 4px solid;
+            transition: all 0.2s;
+        }
+
+        .insight-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .insight-item.positive {
+            border-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+        }
+
+        .insight-item.warning {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+        }
+
+        .insight-item.info {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+        }
+
+        .insight-icon {
+            font-size: 1.75rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .insight-content {
+            flex: 1;
+        }
+
+        .insight-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .insight-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            .insight-item {
+                padding: 0.875rem;
+            }
+
+            .insight-icon {
+                font-size: 1.5rem;
+            }
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -1721,6 +1868,53 @@
                         <div class="stat-card">
                             <div class="stat-value" id="avgMilk">0ml</div>
                             <div class="stat-label">Avg Milk/Day</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Data -->
+                <div class="card">
+                    <div class="card-title">💾 Export Data</div>
+                    <div class="export-section">
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">
+                            Backup your data or export for analysis. Perfect for pediatrician visits!
+                        </p>
+                        <div class="export-options">
+                            <div class="export-option">
+                                <label class="form-label">Export Range</label>
+                                <select id="exportRange" class="form-input">
+                                    <option value="7">Last 7 days</option>
+                                    <option value="30">Last 30 days</option>
+                                    <option value="all" selected>All time</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="export-buttons">
+                            <button class="export-btn csv-btn" onclick="exportToCSV()">
+                                <span style="font-size: 1.5rem;">📊</span>
+                                <div>
+                                    <div style="font-weight: 600;">Export to CSV</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.8;">Open in Excel/Sheets</div>
+                                </div>
+                            </button>
+                            <button class="export-btn json-btn" onclick="exportToJSON()">
+                                <span style="font-size: 1.5rem;">💾</span>
+                                <div>
+                                    <div style="font-weight: 600;">Export to JSON</div>
+                                    <div style="font-size: 0.85rem; opacity: 0.8;">Complete backup</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pattern Insights -->
+                <div class="card">
+                    <div class="card-title">🧠 Smart Insights</div>
+                    <div class="insights-container" id="insightsContainer">
+                        <div class="empty-state">
+                            <div class="empty-icon">📊</div>
+                            <div>Not enough data yet. Keep tracking!</div>
                         </div>
                     </div>
                 </div>
@@ -2941,6 +3135,9 @@
 
             // Update quick stats widget
             updateQuickStats();
+
+            // Update pattern insights
+            calculateInsights();
         }
 
         // Render Activity Log
@@ -3351,6 +3548,237 @@
 
             const days = Math.floor(hours / 24);
             return `${days}d ago`;
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const range = document.getElementById('exportRange').value;
+            const activities = getActivitiesForExport(range);
+
+            if (activities.length === 0) {
+                alert('No activities to export for selected range');
+                return;
+            }
+
+            // CSV Header
+            let csv = 'Date,Time,Type,Details,Notes\n';
+
+            // Add rows
+            activities.forEach(activity => {
+                const date = new Date(activity.timestamp);
+                const dateStr = date.toLocaleDateString('en-US');
+                const timeStr = formatTime(date);
+                const type = activity.type.charAt(0).toUpperCase() + activity.type.slice(1);
+
+                let details = '';
+                if (activity.type === 'feed') {
+                    details = `${activity.feedType || 'Formula'}`;
+                    if (activity.duration) details += ` | Duration: ${activity.duration}min`;
+                    if (activity.amount) details += ` | Amount: ${activity.amount}ml`;
+                } else if (activity.type === 'diaper') {
+                    details = activity.diaperType ? activity.diaperType.charAt(0).toUpperCase() + activity.diaperType.slice(1) : '';
+                } else if (activity.type === 'sleep') {
+                    const hours = Math.floor(activity.duration / 3600000);
+                    const mins = Math.floor((activity.duration % 3600000) / 60000);
+                    details = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                } else if (activity.type === 'health') {
+                    details = activity.healthType || '';
+                    if (activity.measurement) details += ` | ${activity.measurement}`;
+                }
+
+                const notes = activity.notes ? activity.notes.replace(/,/g, ';').replace(/"/g, '""') : '';
+
+                csv += `"${dateStr}","${timeStr}","${type}","${details}","${notes}"\n`;
+            });
+
+            // Download
+            downloadFile(csv, `nurturelog-${range === 'all' ? 'all-time' : range + '-days'}.csv`, 'text/csv');
+        }
+
+        // Export to JSON
+        function exportToJSON() {
+            const range = document.getElementById('exportRange').value;
+            const activities = getActivitiesForExport(range);
+
+            if (activities.length === 0) {
+                alert('No activities to export for selected range');
+                return;
+            }
+
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                babyName: appState.babyName,
+                babyBirthdate: appState.babyBirthdate,
+                exportRange: range,
+                activities: activities
+            };
+
+            const json = JSON.stringify(exportData, null, 2);
+            downloadFile(json, `nurturelog-backup-${range === 'all' ? 'all-time' : range + '-days'}.json`, 'application/json');
+        }
+
+        // Get activities for export based on range
+        function getActivitiesForExport(range) {
+            if (range === 'all') {
+                return [...appState.activities].sort((a, b) => b.timestamp - a.timestamp);
+            }
+
+            const days = parseInt(range);
+            const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
+
+            return appState.activities
+                .filter(a => a.timestamp >= cutoff)
+                .sort((a, b) => b.timestamp - a.timestamp);
+        }
+
+        // Download file helper
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Calculate and Display Pattern Insights
+        function calculateInsights() {
+            const container = document.getElementById('insightsContainer');
+            if (!container) return;
+
+            const insights = [];
+            const now = Date.now();
+            const weekAgo = now - (7 * 24 * 60 * 60 * 1000);
+            const recentActivities = appState.activities.filter(a => a.timestamp >= weekAgo);
+
+            if (recentActivities.length < 5) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div>Not enough data yet. Keep tracking!</div></div>';
+                return;
+            }
+
+            // 1. Longest Sleep Stretch
+            const sleeps = recentActivities.filter(a => a.type === 'sleep' && a.duration);
+            if (sleeps.length > 0) {
+                const longestSleep = Math.max(...sleeps.map(s => s.duration));
+                const hours = (longestSleep / 3600000).toFixed(1);
+                if (hours >= 4) {
+                    insights.push({
+                        type: 'positive',
+                        icon: '🌙',
+                        title: `Best Sleep: ${hours}h!`,
+                        description: `Your baby had their longest sleep stretch in the last 7 days. Great progress!`
+                    });
+                }
+            }
+
+            // 2. Average Feed Interval
+            const feeds = recentActivities.filter(a => a.type === 'feed').sort((a, b) => a.timestamp - b.timestamp);
+            if (feeds.length >= 3) {
+                let totalInterval = 0;
+                for (let i = 1; i < feeds.length; i++) {
+                    totalInterval += feeds[i].timestamp - feeds[i - 1].timestamp;
+                }
+                const avgInterval = totalInterval / (feeds.length - 1);
+                const avgHours = (avgInterval / 3600000).toFixed(1);
+                insights.push({
+                    type: 'info',
+                    icon: '🍼',
+                    title: `Feeding Pattern`,
+                    description: `Average ${avgHours}h between feedings. ${avgHours > 3.5 ? 'Baby is spacing out well!' : 'Frequent feeding is normal for newborns.'}`
+                });
+            }
+
+            // 3. Today's Activity Check
+            const today = new Date().setHours(0, 0, 0, 0);
+            const todayActivities = appState.activities.filter(a => a.timestamp >= today);
+            const todayFeeds = todayActivities.filter(a => a.type === 'feed').length;
+            const todayDiapers = todayActivities.filter(a => a.type === 'diaper').length;
+
+            if (todayFeeds < 3 && new Date().getHours() > 12) {
+                insights.push({
+                    type: 'warning',
+                    icon: '⚠️',
+                    title: `Low Activity Today`,
+                    description: `Only ${todayFeeds} feedings logged today. Did you forget to track some?`
+                });
+            }
+
+            if (todayDiapers >= 6 && todayFeeds >= 6) {
+                insights.push({
+                    type: 'positive',
+                    icon: '✅',
+                    title: `Great Day!`,
+                    description: `${todayFeeds} feedings and ${todayDiapers} diapers today. You're doing amazing!`
+                });
+            }
+
+            // 4. Diaper Pattern (correlation with feeds)
+            const diapers = recentActivities.filter(a => a.type === 'diaper').sort((a, b) => a.timestamp - b.timestamp);
+            if (feeds.length >= 5 && diapers.length >= 5) {
+                let diaperAfterFeedCount = 0;
+                diapers.forEach(diaper => {
+                    const recentFeed = feeds.find(feed =>
+                        feed.timestamp < diaper.timestamp &&
+                        diaper.timestamp - feed.timestamp < 30 * 60000 // Within 30 min
+                    );
+                    if (recentFeed) diaperAfterFeedCount++;
+                });
+
+                if (diaperAfterFeedCount >= diapers.length * 0.6) {
+                    insights.push({
+                        type: 'info',
+                        icon: '🚼',
+                        title: `Diaper Pattern Detected`,
+                        description: `Baby usually needs a diaper change within 30 minutes after feeding.`
+                    });
+                }
+            }
+
+            // 5. Consistency Score
+            if (feeds.length >= 7) {
+                const feedTimestamps = feeds.map(f => f.timestamp);
+                const intervals = [];
+                for (let i = 1; i < feedTimestamps.length; i++) {
+                    intervals.push(feedTimestamps[i] - feedTimestamps[i - 1]);
+                }
+                const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                const variance = intervals.reduce((sum, interval) => sum + Math.pow(interval - avgInterval, 2), 0) / intervals.length;
+                const stdDev = Math.sqrt(variance);
+                const consistency = 1 - (stdDev / avgInterval);
+
+                if (consistency > 0.7) {
+                    insights.push({
+                        type: 'positive',
+                        icon: '📈',
+                        title: `Consistent Schedule`,
+                        description: `Your feeding schedule is very consistent! This helps establish healthy routines.`
+                    });
+                }
+            }
+
+            // Render insights
+            if (insights.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><div>Keep tracking to see personalized insights!</div></div>';
+                return;
+            }
+
+            let html = '';
+            insights.forEach(insight => {
+                html += `
+                    <div class="insight-item ${insight.type}">
+                        <div class="insight-icon">${insight.icon}</div>
+                        <div class="insight-content">
+                            <div class="insight-title">${insight.title}</div>
+                            <div class="insight-description">${insight.description}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         // Update Guidelines

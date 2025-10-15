@@ -4,35 +4,46 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![GitHub Pages](https://img.shields.io/badge/demo-live-success.svg)](https://dr-dkp.github.io/nurturelog/)
 
-A comprehensive Progressive Web App for tracking your baby's feeding schedules, sleep patterns, health records, developmental milestones, and more. Features medically accurate, pediatric-approved guidelines and works 100% offline.
+A comprehensive Progressive Web App for tracking your baby's feeding schedules, sleep patterns, health records, developmental milestones, and more. Features medically accurate, pediatric-approved guidelines and works 100% offline with advanced analytics and insights.
 
 **Perfect for:** New parents, caregivers, pediatrician visits, newborn care (0-12 months)
 
 ## ✨ Features
 
 ### Core Tracking
-- **Smart Feeding Timer** - Auto-scheduling with live countdown
+- **Smart Feeding Timer** - Auto-scheduling with live countdown and 45-minute tolerance
 - **Sleep Tracker** - Duration tracking with quality notes
-- **Diaper Log** - Track output with health indicators
+- **Diaper Log** - Track output with health indicators and timestamps
 - **Health Records** - Temperature, weight, medicine logs
-- **Pumping Tracker** - Log breast milk pumping sessions
-- **Tummy Time** - Track daily tummy time with goals
-- **Milestone Tracker** - CDC-approved developmental milestones
+- **Delete Entries** - Easily remove wrong entries with confirmation
+- **Custom Time Entry** - Backdate any activity if you forgot to log
 
-### Smart Features
-- **Missed Feeding Alerts** - Visual warnings when feedings are overdue
-- **Medically Accurate Flow Calculator** - Estimate intake by age (0.5-5ml/min based on research)
-- **Auto-Schedule Generation** - Creates full-day feeding schedule
-- **Age-Based Guidelines** - Automatic recommendations as baby grows
-- **Manual Time Entry** - Backdate sleep/feeding logs if you forgot to start timer
-- **Dark Mode** - Perfect for night feedings
-- **Comprehensive Care Guide** - Midwife-approved medical information
+### Advanced Analytics & Insights
+- **📅 Detailed Timeline View** - Day-by-day expandable history with exact timestamps
+- **📊 7-Day Activity Charts** - Visual bar charts for feedings, diapers, sleep
+- **🎯 Interactive Charts** - Click any bar to jump to detailed timeline for that day
+- **⚡ At a Glance Widget** - Real-time status: last feeding, diaper, current sleep, schedule status
+- **🧠 Smart Insights** - AI-like pattern detection:
+  - Longest sleep stretch achievements
+  - Average feeding intervals analysis
+  - Diaper-to-feeding correlation detection
+  - Low activity alerts
+  - Schedule consistency score
 
 ### Data Management
-- **100% Offline** - Works without internet
+- **💾 Export to CSV** - Open in Excel/Google Sheets for analysis
+- **💾 Export to JSON** - Complete backup for restore/transfer
+- **📅 Date Range Selection** - Export last 7 days, 30 days, or all time
+- **100% Offline** - Works without internet after installation
 - **Local Storage** - All data stays on your device
-- **Export Options** - JSON backup & Excel CSV export
-- **Multi-format Reports** - Perfect for pediatrician visits
+
+### Smart Features
+- **Visual Timeline** - Color-coded dots and connecting lines for activity flow
+- **Missed Feeding Alerts** - Visual warnings when feedings are overdue
+- **Medically Accurate Flow Calculator** - Estimate intake by age (0.5-5ml/min based on research)
+- **Auto-Schedule Generation** - Creates full-day feeding schedule with smart tolerance
+- **Age-Based Guidelines** - Automatic recommendations as baby grows
+- **Comprehensive Care Guide** - Midwife-approved medical information
 
 ---
 
@@ -48,14 +59,14 @@ A comprehensive Progressive Web App for tracking your baby's feeding schedules, 
 
 1. Create a new GitHub repository
 2. Upload these files:
-   - `baby_tracker_enhanced.html`
+   - `index.html`
    - `manifest.json`
    - `sw.js`
    - `icon-192.svg`
    - `icon-512.svg`
 3. Go to Settings → Pages
 4. Select "Deploy from main branch"
-5. Visit `https://yourusername.github.io/repo-name/baby_tracker_enhanced.html`
+5. Visit `https://yourusername.github.io/repo-name/`
 6. **Install button will now appear!**
 
 #### Option 2: Netlify Drop (Easiest - No Account Initially)
@@ -82,7 +93,7 @@ python3 -m http.server 8000 --bind 0.0.0.0
 npx http-server -S -C cert.pem -K key.pem -p 8000
 ```
 
-Then visit: `https://localhost:8000/baby_tracker_enhanced.html`
+Then visit: `https://localhost:8000/`
 
 ---
 
@@ -124,36 +135,37 @@ Once served over HTTPS:
 ### Daily Use
 1. **Monitor the Timer** - Large countdown shows time until next feeding
 2. **Quick Actions** - One-tap buttons for Feed, Sleep, Diaper, Health
-3. **View Schedule** - See full day timeline with progress
-4. **Check Stats** - Today's summary and weekly analytics
-5. **Read Care Guide** - Access medical information anytime
+3. **At a Glance Widget** - Quick status of all recent activities
+4. **View Timeline** - Click on any day in charts to see detailed breakdown
+5. **Check Insights** - See smart pattern detection and recommendations
+6. **Export Data** - Backup or prepare reports for pediatrician visits
 
 ### Key Features
 
 **Smart Scheduling:**
 - Feeds at 8:00 AM → Next automatically schedules at 10:30 AM (2.5h interval)
-- Miss a feeding? Get alerted with options to log or skip
+- 45-minute tolerance window reduces false "missed" alerts
 - Schedule regenerates after each feeding
+- Real-time status indicator (on track/feeding soon/behind)
 
-**Milk Flow Calculator:**
-- Settings → Milk Flow Rate
-- Choose age-appropriate rate (0.5-5ml/min - medically accurate)
-- Auto-estimates intake: "15 min = ~22ml" (for newborns)
+**Interactive Timeline:**
+- Click any bar in the 7-day charts
+- Automatically switches to Activity tab
+- Expands and scrolls to that day's detailed timeline
+- See exact times for every feeding, diaper, sleep
 
-**Pumping Tracker:**
-- Log pump sessions with time and amounts
-- Track left/right breast separately
-- Monitor total milk stash
+**Smart Insights:**
+- "Best Sleep: 6.5h! Great progress!"
+- "Feeding every 3.2h on average"
+- "Baby usually needs diaper change within 30min after feeding"
+- "Only 2 feedings today - did you forget to log?"
+- "Your feeding schedule is very consistent!"
 
-**Tummy Time:**
-- Start/stop timer
-- Track daily totals
-- Age-based goal recommendations
-
-**Milestones:**
-- CDC developmental checklist
-- Track physical, social, language milestones
-- Perfect for pediatrician visits
+**Export for Doctor Visits:**
+- Stats Tab → Export Data
+- Choose date range (7 days, 30 days, all time)
+- Export to CSV for Excel analysis
+- Export to JSON for complete backup
 
 ---
 
@@ -164,6 +176,7 @@ Once served over HTTPS:
 - **No Tracking** - Zero analytics or data collection
 - **Exportable** - Back up anytime to JSON or CSV
 - **Secure** - Data never leaves your device
+- **Safe Updates** - localStorage preserved when app updates
 
 ---
 
@@ -183,6 +196,20 @@ Once served over HTTPS:
 - Wait 30 seconds and click/scroll on the page
 - Check browser console for errors (F12 → Console)
 
+### Charts Not Clickable
+
+**Solution:**
+- Ensure JavaScript is enabled in browser
+- Try refreshing the page
+- Check browser console for errors
+
+### Export Not Downloading
+
+**Solution:**
+- Check browser download permissions
+- Ensure pop-ups are not blocked
+- Try different browser if issue persists
+
 ### App Won't Open from File
 
 PWAs don't work from `file://` protocol. Must be served over HTTP/HTTPS.
@@ -199,13 +226,13 @@ Check:
 ## 📁 File Structure
 
 ```
-baby-tracker/
-├── baby_tracker_enhanced.html  # Main app (open this)
-├── manifest.json                # PWA manifest
-├── sw.js                        # Service worker
-├── icon-192.svg                 # App icon (192x192)
-├── icon-512.svg                 # App icon (512x512)
-└── README.md                    # This file
+nurturelog/
+├── index.html          # Main app file
+├── manifest.json       # PWA manifest
+├── sw.js              # Service worker (v7)
+├── icon-192.svg       # App icon (192x192)
+├── icon-512.svg       # App icon (512x512)
+└── README.md          # This file
 ```
 
 **Note:** PNG icons are recommended but SVG works fine for testing. For production, convert SVGs to PNGs:
@@ -222,16 +249,19 @@ baby-tracker/
 A: Yes! Once installed, works 100% offline.
 
 **Q: Can I share with my partner?**
-A: Currently single-device. Future update may add sync. For now, use Export/Import to transfer data.
+A: Currently single-device. Use Export/Import to transfer data between devices via JSON backup.
 
-**Q: Is my data safe?**
-A: All data stays on your device. No cloud, no accounts, no tracking.
+**Q: Is my data safe during updates?**
+A: Yes! Your activity data is in localStorage (permanent), while app code is in cache (updateable). Updates never delete your data.
 
 **Q: Can I print reports?**
 A: Yes! Export to CSV and open in Excel, or use browser print function.
 
 **Q: Will this drain my battery?**
-A: No, it's a simple HTML app with minimal resources.
+A: No, it's a lightweight HTML app with minimal resources.
+
+**Q: How do I backup my data?**
+A: Go to Stats tab → Export Data → Export to JSON. Save the file somewhere safe.
 
 ---
 
@@ -243,24 +273,40 @@ A: No, it's a simple HTML app with minimal resources.
 - [ ] Look for "📥 Install App" button in header
 - [ ] Click to install
 - [ ] Open from home screen
-- [ ] Complete setup
-- [ ] Start tracking!
+- [ ] Complete setup (baby name, birthdate, feeding interval)
+- [ ] Start tracking activities
+- [ ] Explore timeline, charts, and insights
+- [ ] Export data regularly for backup
 
 ---
 
 ## 📝 Version History
 
-**v2.0 Enhanced** (Current)
+**v3.0 Advanced** (Current)
+- ✅ Detailed timeline with day-by-day expandable sections
+- ✅ Interactive clickable 7-day charts
+- ✅ "At a Glance" quick stats widget with real-time updates
+- ✅ Smart pattern insights (sleep, feeding, diaper analysis)
+- ✅ Export to CSV and JSON with date range selection
+- ✅ Delete wrong entries with confirmation
+- ✅ 45-minute feed tolerance (reduced false alerts)
+- ✅ Visual timeline with colored dots and connecting lines
+- ✅ Click charts to navigate to detailed timeline
+- ✅ Modern gradient design with smooth animations
+- ✅ Full offline support with service worker v7
+
+**v2.0 Enhanced**
 - ✅ Proper PWA with installable app
 - ✅ Custom install button
-- ✅ Pumping tracker
-- ✅ Tummy time tracker
-- ✅ Milestone tracker
 - ✅ Missed feeding alerts
 - ✅ Milk flow calculator
 - ✅ Comprehensive care guide
-- ✅ Modern gradient design
 - ✅ Full offline support
+
+**v1.0 Initial**
+- ✅ Basic tracking (feed, sleep, diaper, health)
+- ✅ Simple scheduling
+- ✅ Local storage
 
 ---
 
@@ -300,7 +346,7 @@ Happy parenting! 👶💕
 ## 🔍 Keywords & Topics
 
 **For GitHub Discovery:**
-baby-tracker • progressive-web-app • newborn-care • pediatric-health • parenting-app • feeding-tracker • sleep-tracker • offline-first • medical-tracking • baby-care • infant-health • pwa • breastfeeding • baby-monitor • childcare • newborn-tracking • baby-journal • parenting-tools • baby-log • healthcare
+baby-tracker • progressive-web-app • newborn-care • pediatric-health • parenting-app • feeding-tracker • sleep-tracker • offline-first • medical-tracking • baby-care • infant-health • pwa • breastfeeding • baby-monitor • childcare • newborn-tracking • baby-journal • parenting-tools • baby-log • healthcare • baby-analytics • smart-insights • data-export • timeline-view
 
 **Technologies:**
-JavaScript • PWA • Service Worker • LocalStorage • Responsive Design • Mobile-First • Offline Capable • HTML5 • CSS3
+JavaScript • PWA • Service Worker • LocalStorage • Responsive Design • Mobile-First • Offline Capable • HTML5 • CSS3 • Data Visualization • Pattern Recognition
