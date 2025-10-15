@@ -958,6 +958,117 @@
             font-size: 0.95rem;
         }
 
+        .delete-entry-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            border-radius: 8px;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+
+        .delete-entry-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: scale(1.1);
+        }
+
+        .delete-entry-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* History Charts */
+        .chart-section {
+            margin-bottom: 2rem;
+        }
+
+        .chart-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .chart-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chart-day {
+            min-width: 60px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .chart-bar-container {
+            flex: 1;
+            height: 32px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            border-radius: 6px;
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 0.5rem;
+            min-width: 0;
+        }
+
+        .chart-bar.sleep-bar {
+            background: linear-gradient(90deg, #14b8a6, #06b6d4);
+        }
+
+        .chart-bar.diaper-bar {
+            background: linear-gradient(90deg, #f59e0b, #ef4444);
+        }
+
+        .chart-value {
+            font-size: 0.85rem;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .chart-day {
+                min-width: 50px;
+                font-size: 0.8rem;
+            }
+
+            .chart-bar-container {
+                height: 28px;
+            }
+
+            .chart-value {
+                font-size: 0.75rem;
+            }
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -1257,6 +1368,26 @@
                             <div class="empty-icon">📝</div>
                             <div>No activities recorded yet</div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- History Charts -->
+                <div class="card">
+                    <div class="card-title">📊 7-Day Activity History</div>
+
+                    <div class="chart-section">
+                        <div class="chart-label">🍼 Daily Feedings</div>
+                        <div class="bar-chart" id="feedingChart"></div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="chart-label">🚼 Daily Diapers</div>
+                        <div class="bar-chart" id="diaperChart"></div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="chart-label">😴 Daily Sleep Hours</div>
+                        <div class="bar-chart" id="sleepChart"></div>
                     </div>
                 </div>
             </div>
@@ -1961,8 +2092,8 @@
                 const isNext = !isPast && !foundActive;
                 const minutesUntil = Math.floor((item.time - now) / 60000);
 
-                // Mark as missed if 30+ minutes overdue and not completed
-                if (isPast && !item.completed && minutesUntil < -30) {
+                // Mark as missed if 45+ minutes overdue and not completed
+                if (isPast && !item.completed && minutesUntil < -45) {
                     item.missed = true;
                 }
 
@@ -2125,7 +2256,7 @@
             appState.activities.push(activity);
 
             // Mark scheduled feed as completed
-            const tolerance = 30 * 60000; // 30 minutes
+            const tolerance = 45 * 60000; // 45 minutes
             const matchingFeed = appState.schedule.find(item =>
                 Math.abs(item.time - feedTimestamp) < tolerance && !item.completed
             );
@@ -2494,6 +2625,9 @@
             // Update activity log
             renderActivityLog();
             renderSchedule();
+
+            // Update activity charts
+            renderActivityCharts();
         }
 
         // Render Activity Log
@@ -2538,12 +2672,123 @@
                     <div class="log-header">
                         <div class="log-time">${formatTime(time)}</div>
                         <div class="log-badge ${badge}">${activity.type.toUpperCase()}</div>
+                        <button class="delete-entry-btn" onclick="deleteActivity(${activity.timestamp})" title="Delete entry">❌</button>
                     </div>
                     <div class="log-details">${details}</div>
                 </div>`;
             });
 
             log.innerHTML = html;
+        }
+
+        // Delete Activity
+        function deleteActivity(timestamp) {
+            // Find the activity
+            const index = appState.activities.findIndex(a => a.timestamp === timestamp);
+
+            if (index === -1) {
+                alert('Activity not found');
+                return;
+            }
+
+            const activity = appState.activities[index];
+            const activityType = activity.type.charAt(0).toUpperCase() + activity.type.slice(1);
+            const timeStr = formatTime(new Date(timestamp));
+
+            // Confirm deletion
+            if (!confirm(`Delete this ${activityType} entry?\n\nTime: ${timeStr}\n\nThis cannot be undone!`)) {
+                return;
+            }
+
+            // Remove from activities
+            appState.activities.splice(index, 1);
+
+            // Save and update UI
+            saveState();
+            updateUI();
+
+            // Show confirmation
+            alert('Entry deleted successfully!');
+        }
+
+        // Render Activity Charts
+        function renderActivityCharts() {
+            const now = Date.now();
+            const dayMs = 24 * 60 * 60 * 1000;
+
+            // Create 7-day data structure
+            const chartData = [];
+            for (let i = 6; i >= 0; i--) {
+                const dayStart = now - (i * dayMs);
+                const dayEnd = dayStart + dayMs;
+                const date = new Date(dayStart);
+
+                // Get day label
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                const dayLabel = i === 0 ? 'Today' : dayNames[date.getDay()];
+
+                // Count activities for this day
+                const dayActivities = appState.activities.filter(a => {
+                    return a.timestamp >= dayStart && a.timestamp < dayEnd;
+                });
+
+                const feedings = dayActivities.filter(a => a.type === 'feed').length;
+                const diapers = dayActivities.filter(a => a.type === 'diaper').length;
+
+                // Calculate total sleep hours
+                const sleeps = dayActivities.filter(a => a.type === 'sleep');
+                let totalSleepMinutes = 0;
+                sleeps.forEach(sleep => {
+                    if (sleep.duration) {
+                        totalSleepMinutes += sleep.duration;
+                    }
+                });
+                const sleepHours = (totalSleepMinutes / 60).toFixed(1);
+
+                chartData.push({
+                    label: dayLabel,
+                    feedings: feedings,
+                    diapers: diapers,
+                    sleepHours: parseFloat(sleepHours)
+                });
+            }
+
+            // Find max values for scaling
+            const maxFeedings = Math.max(...chartData.map(d => d.feedings), 1);
+            const maxDiapers = Math.max(...chartData.map(d => d.diapers), 1);
+            const maxSleep = Math.max(...chartData.map(d => d.sleepHours), 1);
+
+            // Render each chart
+            renderBarChart('feedingChart', chartData, 'feedings', maxFeedings, '', 'feeding-bar');
+            renderBarChart('diaperChart', chartData, 'diapers', maxDiapers, '', 'diaper-bar');
+            renderBarChart('sleepChart', chartData, 'sleepHours', maxSleep, 'h', 'sleep-bar');
+        }
+
+        // Render a single bar chart
+        function renderBarChart(containerId, data, valueKey, maxValue, unit, barClass) {
+            const container = document.getElementById(containerId);
+
+            if (!container) return;
+
+            let html = '';
+            data.forEach(day => {
+                const value = day[valueKey];
+                const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
+                const displayValue = value > 0 ? `${value}${unit}` : '';
+
+                html += `
+                    <div class="chart-bar-row">
+                        <div class="chart-day">${day.label}</div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar ${barClass}" style="width: ${percentage}%">
+                                ${displayValue ? `<span class="chart-value">${displayValue}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<div class="empty-state">No data yet</div>';
         }
 
         // Update Guidelines
