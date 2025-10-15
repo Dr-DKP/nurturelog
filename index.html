@@ -1008,6 +1008,13 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            padding: 0.25rem;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .chart-bar-row:hover {
+            background: rgba(168, 85, 247, 0.08);
         }
 
         .chart-day {
@@ -1066,6 +1073,260 @@
 
             .chart-value {
                 font-size: 0.75rem;
+            }
+        }
+
+        /* Detailed Timeline */
+        .timeline-day-section {
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .timeline-day-header {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.15));
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .timeline-day-header:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+        }
+
+        .timeline-day-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .timeline-day-stats {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .timeline-expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .timeline-expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .timeline-day-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .timeline-day-content.expanded {
+            max-height: 2000px;
+            padding: 1rem 0;
+        }
+
+        .timeline-event {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .timeline-event:hover {
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .timeline-event-time {
+            min-width: 70px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            padding-top: 0.25rem;
+        }
+
+        .timeline-event-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-top: 0.5rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+        }
+
+        .timeline-event-dot.feed {
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+        }
+
+        .timeline-event-dot.diaper {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+        }
+
+        .timeline-event-dot.sleep {
+            background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        }
+
+        .timeline-event-dot.health {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .timeline-event-line {
+            position: absolute;
+            left: 93px;
+            top: 2rem;
+            bottom: -0.75rem;
+            width: 2px;
+            background: linear-gradient(180deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.1));
+        }
+
+        .timeline-event:last-child .timeline-event-line {
+            display: none;
+        }
+
+        .timeline-event-content {
+            flex: 1;
+        }
+
+        .timeline-event-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-event-details {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .timeline-event-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .timeline-event-badge.feed {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
+        .timeline-event-badge.diaper {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .timeline-event-badge.sleep {
+            background: rgba(20, 184, 166, 0.15);
+            color: #14b8a6;
+        }
+
+        .timeline-event-badge.health {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        @media (max-width: 480px) {
+            .timeline-day-header {
+                padding: 0.875rem 1rem;
+            }
+
+            .timeline-event {
+                padding: 0.625rem 1rem;
+                gap: 0.75rem;
+            }
+
+            .timeline-event-time {
+                min-width: 60px;
+                font-size: 0.85rem;
+            }
+
+            .timeline-event-line {
+                left: 79px;
+            }
+
+            .timeline-day-title {
+                font-size: 1rem;
+            }
+
+            .timeline-day-stats {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Quick Stats Widget */
+        .quick-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .quick-stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            transition: all 0.2s;
+        }
+
+        .quick-stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.15);
+        }
+
+        .quick-stat-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .quick-stat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .quick-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            word-break: break-word;
+        }
+
+        @media (max-width: 480px) {
+            .quick-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .quick-stat-item {
+                padding: 0.875rem;
+            }
+
+            .quick-stat-icon {
+                font-size: 1.75rem;
+            }
+
+            .quick-stat-value {
+                font-size: 1rem;
             }
         }
 
@@ -1332,6 +1593,41 @@
                     </div>
                 </div>
 
+                <!-- Quick Stats Widget -->
+                <div class="card">
+                    <div class="card-title">⚡ At a Glance</div>
+                    <div class="quick-stats-grid">
+                        <div class="quick-stat-item">
+                            <div class="quick-stat-icon">🍼</div>
+                            <div class="quick-stat-content">
+                                <div class="quick-stat-label">Last Feeding</div>
+                                <div class="quick-stat-value" id="quickLastFeed">--</div>
+                            </div>
+                        </div>
+                        <div class="quick-stat-item">
+                            <div class="quick-stat-icon">🚼</div>
+                            <div class="quick-stat-content">
+                                <div class="quick-stat-label">Last Diaper</div>
+                                <div class="quick-stat-value" id="quickLastDiaper">--</div>
+                            </div>
+                        </div>
+                        <div class="quick-stat-item">
+                            <div class="quick-stat-icon">😴</div>
+                            <div class="quick-stat-content">
+                                <div class="quick-stat-label">Current Sleep</div>
+                                <div class="quick-stat-value" id="quickCurrentSleep">Not sleeping</div>
+                            </div>
+                        </div>
+                        <div class="quick-stat-item">
+                            <div class="quick-stat-icon" id="quickStatusIcon">✅</div>
+                            <div class="quick-stat-content">
+                                <div class="quick-stat-label">Schedule Status</div>
+                                <div class="quick-stat-value" id="quickScheduleStatus">On track</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Last Diaper Change Info -->
                 <div class="card" id="lastDiaperCard" style="display: none;">
                     <div class="card-title">🚼 Last Diaper Change</div>
@@ -1367,6 +1663,17 @@
                         <div class="empty-state">
                             <div class="empty-icon">📝</div>
                             <div>No activities recorded yet</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Timeline View -->
+                <div class="card">
+                    <div class="card-title">📅 Detailed Timeline</div>
+                    <div id="detailedTimeline">
+                        <div class="empty-state">
+                            <div class="empty-icon">📅</div>
+                            <div>No activities to display</div>
                         </div>
                     </div>
                 </div>
@@ -2628,6 +2935,12 @@
 
             // Update activity charts
             renderActivityCharts();
+
+            // Update detailed timeline
+            renderDetailedTimeline();
+
+            // Update quick stats widget
+            updateQuickStats();
         }
 
         // Render Activity Log
@@ -2771,13 +3084,14 @@
             if (!container) return;
 
             let html = '';
-            data.forEach(day => {
+            data.forEach((day, index) => {
                 const value = day[valueKey];
                 const percentage = maxValue > 0 ? (value / maxValue) * 100 : 0;
                 const displayValue = value > 0 ? `${value}${unit}` : '';
+                const dayIndex = 6 - index; // Convert chart index to timeline day index
 
                 html += `
-                    <div class="chart-bar-row">
+                    <div class="chart-bar-row" style="cursor: pointer;" onclick="scrollToTimelineDay(${dayIndex})" title="Click to view detailed timeline">
                         <div class="chart-day">${day.label}</div>
                         <div class="chart-bar-container">
                             <div class="chart-bar ${barClass}" style="width: ${percentage}%">
@@ -2789,6 +3103,254 @@
             });
 
             container.innerHTML = html || '<div class="empty-state">No data yet</div>';
+        }
+
+        // Render Detailed Timeline
+        function renderDetailedTimeline() {
+            const container = document.getElementById('detailedTimeline');
+
+            if (!container) return;
+
+            if (appState.activities.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div>No activities to display</div></div>';
+                return;
+            }
+
+            const now = Date.now();
+            const dayMs = 24 * 60 * 60 * 1000;
+
+            // Group activities by day (last 7 days)
+            const dayGroups = [];
+            for (let i = 0; i < 7; i++) {
+                const dayStart = now - (i * dayMs);
+                const dayEnd = dayStart + dayMs;
+                const date = new Date(dayStart);
+
+                const dayActivities = appState.activities.filter(a => {
+                    return a.timestamp >= dayStart && a.timestamp < dayEnd;
+                }).sort((a, b) => b.timestamp - a.timestamp); // Most recent first
+
+                if (dayActivities.length > 0) {
+                    const dayLabel = i === 0 ? 'Today' :
+                                    i === 1 ? 'Yesterday' :
+                                    date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+                    // Calculate stats
+                    const feedings = dayActivities.filter(a => a.type === 'feed').length;
+                    const diapers = dayActivities.filter(a => a.type === 'diaper').length;
+                    const sleeps = dayActivities.filter(a => a.type === 'sleep');
+                    const totalSleepMinutes = sleeps.reduce((sum, s) => sum + (s.duration || 0), 0);
+                    const sleepHours = (totalSleepMinutes / 60).toFixed(1);
+
+                    const stats = [];
+                    if (feedings > 0) stats.push(`${feedings} feeding${feedings > 1 ? 's' : ''}`);
+                    if (diapers > 0) stats.push(`${diapers} diaper${diapers > 1 ? 's' : ''}`);
+                    if (sleepHours > 0) stats.push(`${sleepHours}h sleep`);
+
+                    dayGroups.push({
+                        label: dayLabel,
+                        stats: stats.join(' • '),
+                        activities: dayActivities,
+                        expanded: i === 0 // Auto-expand today
+                    });
+                }
+            }
+
+            if (dayGroups.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><div>No activities in last 7 days</div></div>';
+                return;
+            }
+
+            let html = '';
+            dayGroups.forEach((day, dayIndex) => {
+                const expandedClass = day.expanded ? 'expanded' : '';
+
+                html += `
+                    <div class="timeline-day-section">
+                        <div class="timeline-day-header" onclick="toggleTimelineDay(${dayIndex})">
+                            <div>
+                                <div class="timeline-day-title">${day.label}</div>
+                                <div class="timeline-day-stats">${day.stats}</div>
+                            </div>
+                            <div class="timeline-expand-icon ${expandedClass}" id="timeline-icon-${dayIndex}">▼</div>
+                        </div>
+                        <div class="timeline-day-content ${expandedClass}" id="timeline-content-${dayIndex}">
+                `;
+
+                day.activities.forEach((activity, actIndex) => {
+                    const time = new Date(activity.timestamp);
+                    const timeStr = formatTime(time);
+                    const showLine = actIndex < day.activities.length - 1;
+
+                    let icon = '';
+                    let title = '';
+                    let details = '';
+                    let badge = activity.type;
+
+                    if (activity.type === 'feed') {
+                        icon = '🍼';
+                        title = 'Feeding';
+                        details = activity.feedType || 'Formula';
+                        if (activity.duration) details += ` • ${activity.duration} min`;
+                        if (activity.amount) details += ` • ${activity.amount}ml`;
+                        if (activity.notes) details += ` • ${activity.notes}`;
+                    } else if (activity.type === 'diaper') {
+                        icon = '🚼';
+                        title = 'Diaper Change';
+                        details = activity.diaperType ? activity.diaperType.charAt(0).toUpperCase() + activity.diaperType.slice(1) : '';
+                        if (activity.notes) details += ` • ${activity.notes}`;
+                    } else if (activity.type === 'sleep') {
+                        icon = '😴';
+                        title = 'Sleep';
+                        const hours = Math.floor(activity.duration / 3600000);
+                        const mins = Math.floor((activity.duration % 3600000) / 60000);
+                        details = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                        if (activity.notes) details += ` • ${activity.notes}`;
+                    } else if (activity.type === 'health') {
+                        icon = '💊';
+                        title = 'Health';
+                        if (activity.healthType) details = activity.healthType;
+                        if (activity.measurement) details += ` • ${activity.measurement}`;
+                        if (activity.notes) details += ` • ${activity.notes}`;
+                    }
+
+                    html += `
+                        <div class="timeline-event">
+                            <div class="timeline-event-time">${timeStr}</div>
+                            <div class="timeline-event-dot ${badge}"></div>
+                            ${showLine ? '<div class="timeline-event-line"></div>' : ''}
+                            <div class="timeline-event-content">
+                                <div class="timeline-event-title">
+                                    <span class="timeline-event-badge ${badge}">${icon} ${title.toUpperCase()}</span>
+                                </div>
+                                <div class="timeline-event-details">${details}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Toggle Timeline Day Expansion
+        function toggleTimelineDay(dayIndex) {
+            const content = document.getElementById(`timeline-content-${dayIndex}`);
+            const icon = document.getElementById(`timeline-icon-${dayIndex}`);
+
+            if (content && icon) {
+                content.classList.toggle('expanded');
+                icon.classList.toggle('expanded');
+            }
+        }
+
+        // Scroll to Timeline Day (from chart click)
+        function scrollToTimelineDay(dayIndex) {
+            // Switch to Activity tab
+            switchTab('activity');
+
+            // Expand the day if not already expanded
+            const content = document.getElementById(`timeline-content-${dayIndex}`);
+            const icon = document.getElementById(`timeline-icon-${dayIndex}`);
+
+            if (content && icon && !content.classList.contains('expanded')) {
+                content.classList.add('expanded');
+                icon.classList.add('expanded');
+            }
+
+            // Scroll to the day section
+            setTimeout(() => {
+                const daySection = content?.parentElement;
+                if (daySection) {
+                    daySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+
+        // Update Quick Stats Widget
+        function updateQuickStats() {
+            const now = Date.now();
+
+            // Last Feeding
+            const lastFeed = appState.activities
+                .filter(a => a.type === 'feed')
+                .sort((a, b) => b.timestamp - a.timestamp)[0];
+
+            if (lastFeed) {
+                const timeSince = getTimeSince(lastFeed.timestamp);
+                document.getElementById('quickLastFeed').textContent = timeSince;
+            } else {
+                document.getElementById('quickLastFeed').textContent = 'No feeding yet';
+            }
+
+            // Last Diaper
+            const lastDiaper = appState.activities
+                .filter(a => a.type === 'diaper')
+                .sort((a, b) => b.timestamp - a.timestamp)[0];
+
+            if (lastDiaper) {
+                const timeSince = getTimeSince(lastDiaper.timestamp);
+                document.getElementById('quickLastDiaper').textContent = timeSince;
+            } else {
+                document.getElementById('quickLastDiaper').textContent = 'No diaper yet';
+            }
+
+            // Current Sleep
+            if (appState.sleepStart) {
+                const duration = Math.floor((now - appState.sleepStart) / 60000);
+                const hours = Math.floor(duration / 60);
+                const mins = duration % 60;
+                const sleepTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                document.getElementById('quickCurrentSleep').textContent = sleepTime;
+            } else {
+                document.getElementById('quickCurrentSleep').textContent = 'Not sleeping';
+            }
+
+            // Schedule Status
+            const nextFeed = appState.schedule.find(item => item.time > now && !item.completed);
+            if (nextFeed) {
+                const timeUntil = nextFeed.time - now;
+                const minutesUntil = Math.floor(timeUntil / 60000);
+
+                if (minutesUntil < -45) {
+                    document.getElementById('quickScheduleStatus').textContent = 'Behind schedule';
+                    document.getElementById('quickStatusIcon').textContent = '⚠️';
+                } else if (minutesUntil < 15) {
+                    document.getElementById('quickScheduleStatus').textContent = 'Feeding soon';
+                    document.getElementById('quickStatusIcon').textContent = '🔔';
+                } else {
+                    document.getElementById('quickScheduleStatus').textContent = 'On track';
+                    document.getElementById('quickStatusIcon').textContent = '✅';
+                }
+            } else {
+                document.getElementById('quickScheduleStatus').textContent = 'No schedule';
+                document.getElementById('quickStatusIcon').textContent = '📋';
+            }
+        }
+
+        // Helper: Get time since timestamp
+        function getTimeSince(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+
+            if (hours < 24) {
+                return mins > 0 ? `${hours}h ${mins}m ago` : `${hours}h ago`;
+            }
+
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
         }
 
         // Update Guidelines
