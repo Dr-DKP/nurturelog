@@ -991,7 +991,7 @@
         .chart-label {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
@@ -1103,7 +1103,7 @@
         .timeline-day-title {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
         }
 
         .timeline-day-stats {
@@ -1149,7 +1149,7 @@
             min-width: 70px;
             font-size: 0.95rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
             padding-top: 0.25rem;
         }
 
@@ -1198,7 +1198,7 @@
         .timeline-event-title {
             font-size: 1rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
             margin-bottom: 0.25rem;
         }
 
@@ -1307,7 +1307,7 @@
         .quick-stat-value {
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
             word-break: break-word;
         }
 
@@ -1361,7 +1361,7 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s;
-            color: var(--text-main);
+            color: var(--text);
             font-size: 1rem;
             text-align: left;
         }
@@ -1457,7 +1457,7 @@
         .insight-title {
             font-size: 1rem;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text);
             margin-bottom: 0.25rem;
         }
 
@@ -3253,7 +3253,7 @@
                         totalSleepMinutes += sleep.duration;
                     }
                 });
-                const sleepHours = (totalSleepMinutes / 60).toFixed(1);
+                const sleepHours = (totalSleepMinutes / 60000).toFixed(1);
 
                 chartData.push({
                     label: dayLabel,
@@ -3498,8 +3498,8 @@
             }
 
             // Current Sleep
-            if (appState.sleepStart) {
-                const duration = Math.floor((now - appState.sleepStart) / 60000);
+            if (appState.sleepStartTime) {
+                const duration = Math.floor((now - appState.sleepStartTime) / 60000);
                 const hours = Math.floor(duration / 60);
                 const mins = duration % 60;
                 const sleepTime = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
