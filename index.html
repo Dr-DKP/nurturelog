@@ -3253,7 +3253,7 @@
                         totalSleepMinutes += sleep.duration;
                     }
                 });
-                const sleepHours = (totalSleepMinutes / 60000).toFixed(1);
+                const sleepHours = (totalSleepMinutes / 3600000).toFixed(1);
 
                 chartData.push({
                     label: dayLabel,
@@ -3337,7 +3337,7 @@
                     const diapers = dayActivities.filter(a => a.type === 'diaper').length;
                     const sleeps = dayActivities.filter(a => a.type === 'sleep');
                     const totalSleepMinutes = sleeps.reduce((sum, s) => sum + (s.duration || 0), 0);
-                    const sleepHours = (totalSleepMinutes / 60000).toFixed(1);
+                    const sleepHours = (totalSleepMinutes / 3600000).toFixed(1);
 
                     const stats = [];
                     if (feedings > 0) stats.push(`${feedings} feeding${feedings > 1 ? 's' : ''}`);
