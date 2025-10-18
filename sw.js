@@ -1,5 +1,5 @@
 // Service Worker for NurtureLog PWA
-const CACHE_NAME = 'nurturelog-v8';
+const CACHE_NAME = 'nurturelog-v9';
 const urlsToCache = [
   './',
   './index.html',
